@@ -23,14 +23,17 @@ Window {
             title: "通讯设置"
             source: "UartSettings.qml"
         }
+
         Tab {
             title: "Two"
             Item {}
         }
+
         Tab {
             title: "Three"
              Item {}
         }
+
         Tab {
             title: "调试"
             source: "UartDebug.qml"

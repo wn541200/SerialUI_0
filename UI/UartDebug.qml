@@ -2,7 +2,6 @@ import QtQuick 2.0
 import QtQuick.Window 2.2
 import QtQuick.Controls 2.2
 import QtQuick.Dialogs 1.2
-import UartModule 1.0
 
 Rectangle {
     id: mainwindow
@@ -10,27 +9,27 @@ Rectangle {
     anchors.topMargin: 10
 
 
-    UartModule {
-        id: uart
-        // 信号处理函数:串口接收到数据则追加到显示区域
-        onDataReceived: {
-            // 若使用append每次都会新起一行，这里用insert
-            txt.insert(txt.length, uartData)
-        }
 
-        // 信号处理函数：后台出错抛出异常时弹框通知用户
-        onUartError: {
-            // 串口通信过程中如usb转串口被拔出，把串口开关置为关闭状态
-            // 并重新获取可用的串口
-            if (errorMSG === '串口错误') {
-                serial_en_switch.checked = false
-                serial_port.model = uart.get_port_list_info()
+    Connections{
+            target: uart
+            onDataReceived: {
+                // 若使用append每次都会新起一行，这里用insert
+                txt.insert(txt.length, uartData)
             }
-            // 其他错误不需要关闭串口，直接显示错误信息
-            errorMessage.text = errorMSG
-            errorMessage.visible = true
-        }
-    }
+
+            // 信号处理函数：后台出错抛出异常时弹框通知用户
+            onUartError: {
+                // 串口通信过程中如usb转串口被拔出，把串口开关置为关闭状态
+                // 并重新获取可用的串口
+                if (errorMSG === '串口错误') {
+                    serial_en_switch.checked = false
+                    serial_port.model = uart.get_port_list_info()
+                }
+                // 其他错误不需要关闭串口，直接显示错误信息
+                errorMessage.text = errorMSG
+                errorMessage.visible = true
+            }
+     }
 
     // 提示用户出错的对话框，出错时再显示
     MessageDialog {

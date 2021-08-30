@@ -14,8 +14,11 @@ import threading
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    qmlRegisterType(Uart, 'UartModule', 1, 0, 'UartModule')
-    engine = QtQml.QQmlApplicationEngine(QUrl('UI/MainWindow.qml'))
+    # qmlRegisterType(Uart, 'UartModule', 1, 0, 'UartModule')
+
+    engine = QtQml.QQmlApplicationEngine()
+    engine.rootContext().setContextProperty("uart", Uart())
+    engine.load(QUrl('UI/MainWindow.qml'))
 
     t = threading.currentThread()
     print(t.getName())
