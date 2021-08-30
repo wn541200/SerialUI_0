@@ -13,7 +13,7 @@ Rectangle {
         id: serialPortDetectTimer
         interval: 500; running: true; repeat: true
         onTriggered: {
-            let info = uart.get_port_list_info()
+            var info = uart.get_port_list_info()
             if  (JSON.stringify(serial_port.model) !== JSON.stringify(info)) {
                 serial_port.model = info
             }

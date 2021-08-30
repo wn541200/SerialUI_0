@@ -160,69 +160,7 @@ Rectangle {
         anchors.margins: 20
         spacing: 10
 
-        Switch {
-            id: serial_en_switch
-            text: qsTr("串口开关")
-            checkable: false
-            checked: false
-            onCheckedChanged: {
-                // 串口运行时把串口选择和波特率的控件变为不可用
-                // 打开串口进行通信,后端使用python的serial模块，
-                // 自带threading,线程安全，非常省事
-                if (checked) {
-                    serial_port.enabled = false
-                    baud_rate.enabled = false
-                    serialPortDetectTimer.running = false
-                    uart.start()
-                }
-                else {
-                    serial_port.enabled = true
-                    baud_rate.enabled = true
-                    serialPortDetectTimer.running = true
-                    uart.stop()
-                }
-            }
-        }
 
-        // 串口号选择下拉框
-        // 把选择的串口号传到后端的uart对象
-        // 在start()的时候就不用指定打开哪一个串口
-        ComboBox {
-            id: serial_port
-            width: 150
-            height: 30
-            model : uart.get_port_list_info()
-
-            onDisplayTextChanged: {
-                if (serial_port.count) {
-                    serial_en_switch.checkable = true
-                    uart.comPort = currentText
-                }
-                else {
-                    serial_en_switch.checkable = false
-                }
-            }
-
-        }
-
-        // 波特率选择下拉框
-        // 把选择的波特率传到后端的uart对象
-        // 在start()的时候就不用指定波特率了
-        ComboBox {
-            id: baud_rate
-            width: 150
-            height: 30
-            model : ['115200', '9600']
-
-            onActivated: {
-                uart.baudRate = currentText
-            }
-
-            Component.onCompleted: {
-                uart.baudRate = currentText
-            }
-
-        }
 
         Button {
             width: 100
@@ -230,7 +168,7 @@ Rectangle {
             text: qsTr("发送数据")
             enabled: {
                 // 串口没有打开并且要发送数据的输入控件没东西，该按钮不可点击
-                if (serial_en_switch.checked && id_input.length)
+                if ( id_input.length)
                     return true
                 else
                     return false

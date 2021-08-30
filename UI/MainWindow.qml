@@ -7,8 +7,10 @@ import QtQuick.Particles 2.0
 
 Window {
     id: window
-    width: 800
-    height: 600
+    minimumWidth: 1280
+    minimumHeight: 800
+    width: 1280
+    height: 800
     visible: true
     title: qsTr("工具")
 
