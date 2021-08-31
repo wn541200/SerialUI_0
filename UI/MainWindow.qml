@@ -27,8 +27,8 @@ Window {
         }
 
         Tab {
-            title: "Two"
-            Item {}
+            title: "实时监控"
+            source: "MonitorTab.qml"
         }
 
         Tab {

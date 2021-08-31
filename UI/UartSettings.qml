@@ -38,7 +38,7 @@ Rectangle {
                 Layout.rightMargin:  20
                 spacing:  20
                 Label {
-                    text: "串口号:    "
+                    text: "串口号:     "
                 }
                 // 串口号选择下拉框
                 // 把选择的串口号传到后端的uart对象
@@ -69,7 +69,7 @@ Rectangle {
                 Layout.rightMargin:  20
                 spacing:  20
                 Label {
-                    text: "波特率:    "
+                    text: "波特率:     "
                 }
 
                 // 波特率选择下拉框
@@ -98,7 +98,7 @@ Rectangle {
                 Layout.rightMargin:  20
                 spacing:  20
                 Label {
-                    text: "通讯地址:  "
+                    text: "通讯地址:   "
                 }
 
 
@@ -107,6 +107,25 @@ Rectangle {
                     Layout.fillWidth: true
                     height: 30
                     model : ['0x7e', '0x7d']
+
+                }
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.leftMargin:  20
+                Layout.rightMargin:  20
+                spacing:  20
+                Label {
+                    text: "监控间隔:(s)"
+                }
+
+
+                ComboBox {
+
+                    Layout.fillWidth: true
+                    height: 30
+                    model : ['1', '2', '3', '4', '5']
 
                 }
             }

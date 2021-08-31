@@ -11,11 +11,11 @@ class DBJProtocol():
         self.responses = queue.Queue()
         self.events = queue.Queue()
         self.lock = threading.Lock()
-        self.packet = bytearray()
+        self.buffer = bytearray()
 
     def clear(self):
         self.responses.put('')
-        del self.packet[:]
+        del self.buffer[:]
 
     def command(self, transport, command, response='OK', timeout=1):
         uart_write_and_wait_respond_thread = threading.Thread(target=self._run_event, args=(transport, command, timeout))
@@ -37,16 +37,23 @@ class DBJProtocol():
         end = time.time()
         print(end-start)
 
-    def packet_parse(self, data):
-        pass
+    def packet_parse(self, packet):
+        print(packet)
 
     def on_uart_event(self, data):
-        self.packet.extend(data)
-        if b'NB' in self.packet:
-            self.responses.put(b'OK')
-            print('xxxx')
+        self.buffer.extend(data)
+        if b'NB' in self.buffer:
+            start = self.buffer.index(b'N')
+            try:
+                data_len = self.buffer[start+4]
+                packet = self.buffer[start:start+5+data_len+1]
+                del self.buffer[:start+5+data_len+1]
+                self.packet_parse(packet)
+                self.responses.put(b'OK')
+            except Exception as e:
+                print(e)
 
 
-        print(self.packet)
+        # print(self.buffer)
 
 

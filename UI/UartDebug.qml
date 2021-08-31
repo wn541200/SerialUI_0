@@ -40,12 +40,6 @@ Rectangle {
         visible: false
     }
 
-    // 该定时器用于检测是否有串口插拔，后端python的serial模块没找到监听串口插拔的东西
-    Timer {
-        id: serialPortDetectTimer
-        interval: 500; running: true; repeat: true
-        onTriggered: serial_port.model = uart.get_port_list_info()
-    }
 
     // 串口接受到数据后的要在TextArea控件上显示，
     // 由于需要滚动条外面套了个Flickable，
