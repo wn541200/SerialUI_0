@@ -7,6 +7,7 @@ import QtQuick.Layouts 1.3
 Rectangle {
     anchors.fill: parent
     color: "#e5e5e5"
+	anchors.topMargin: 10
 
     // 该定时器用于检测是否有串口插拔，后端python的serial模块没找到监听串口插拔的东西
     Timer {

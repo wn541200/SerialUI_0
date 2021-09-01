@@ -12,13 +12,13 @@ Rectangle {
 
     Connections{
             target: uart
-            onDataReceived: {
+            function onDataReceived(uartData) {
                 // 若使用append每次都会新起一行，这里用insert
                 txt.insert(txt.length, uartData)
             }
 
             // 信号处理函数：后台出错抛出异常时弹框通知用户
-            onUartError: {
+            function onUartError(errorMSG) {
                 // 串口通信过程中如usb转串口被拔出，把串口开关置为关闭状态
                 // 并重新获取可用的串口
                 if (errorMSG === '串口错误') {

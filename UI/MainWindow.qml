@@ -32,8 +32,18 @@ Window {
         }
 
         Tab {
-            title: "Three"
-             Item {}
+            title: "信息记录"
+            source: "InforRecord.qml"
+        }
+		
+		Tab {
+            title: "历史记录"
+            source: "HistoryRecord.qml"
+        }
+		
+		Tab {
+            title: "参数设置"
+             source: "HistoryRecord.qml"
         }
 
         Tab {
