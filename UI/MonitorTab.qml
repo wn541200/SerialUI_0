@@ -1,6 +1,7 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.3
+// import BatteryModel 1.0
 
 Rectangle {
 	id: root
@@ -22,7 +23,7 @@ Rectangle {
 			anchors.fill: parent
 			orientation: ListView.Horizontal
 			spacing: 50
-			model: ContactModel {}
+			model: battery
 			
 			delegate: Rectangle {
 				width: baseInfoGroupBox.width / 6.2
