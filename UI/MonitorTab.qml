@@ -19,6 +19,66 @@ Rectangle {
 		height: 50
 		title: "基本信息"
 		
+		Row {
+			spacing: 50
+			
+			Rectangle {
+				width: baseInfoGroupBox.width / 6.2
+				height: 30
+				color: "#e5e5e5"
+				Text {
+					anchors.centerIn: parent
+					font.pointSize: 12
+					text: "电压: " + batteryStatus.voltage +"V"
+				}
+			}
+			
+			Rectangle {
+				width: baseInfoGroupBox.width / 6.2
+				height: 30
+				color: "#e5e5e5"
+				Text {
+					anchors.centerIn: parent
+					font.pointSize: 12
+					text: "电流: " + batteryStatus.current +"A"
+				}
+			}
+			
+			Rectangle {
+				width: baseInfoGroupBox.width / 6.2
+				height: 30
+				color: "#e5e5e5"
+				Text {
+					anchors.centerIn: parent
+					font.pointSize: 12
+					text: "SOC: " + batteryStatus.soc +"%"
+				}
+			}
+			
+			Rectangle {
+				width: baseInfoGroupBox.width / 6.2
+				height: 30
+				color: "#e5e5e5"
+				Text {
+					anchors.centerIn: parent
+					font.pointSize: 12
+					text: "SOH: " + batteryStatus.soh +"%"
+				}
+			}
+			
+			Rectangle {
+				width: baseInfoGroupBox.width / 6.2
+				height: 30
+				color: "#e5e5e5"
+				Text {
+					anchors.centerIn: parent
+					font.pointSize: 12
+					text: "状态:" + batteryStatus.status
+				}
+			}
+		}
+		
+		/*
 		ListView {
 			anchors.fill: parent
 			orientation: ListView.Horizontal
@@ -33,12 +93,9 @@ Rectangle {
 					anchors.centerIn: parent
 					font.pointSize: 12
 					text: name + ": " + number
-					Component.onCompleted: {
-						console.log(index)
-					}
 				}
 			}
-		}
+		}*/
 	}
 	
 	GridLayout{
