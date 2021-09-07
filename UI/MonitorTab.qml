@@ -125,7 +125,35 @@ Rectangle {
 				anchors.bottomMargin: 5
 				anchors.leftMargin: 5
 				anchors.rightMargin: 5
+				clip: true
 				title: "温度(°c)"
+
+				GridView{
+                    id: temperatureView
+                    anchors.fill: parent
+                    anchors.topMargin: 10
+                    cellWidth: 120
+                    cellHeight: 40
+
+                    delegate: Rectangle {
+                        width: temperatureView.cellWidth
+                        height: temperatureView.cellHeight
+                        Label {
+                            id: temp_label
+                            width: 40
+                            text: "温度" + index
+                        }
+
+                        Label {
+                            anchors.left: temp_label.right
+                            anchors.leftMargin: 20
+                            text: number
+                            color: "blue"
+                        }
+                    }
+                    model: battery
+
+                }
 			}
 		}
 		

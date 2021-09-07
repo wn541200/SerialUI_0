@@ -1,5 +1,6 @@
 from PyQt5.QtCore import *
 from threading import Timer
+from BatteryModel import BatteryModel
 
 
 class BatteryStatus(QObject):
@@ -41,9 +42,10 @@ class BatteryStatus(QObject):
             'charger_adapter': [self.OFF, self.charger_adapterChanged],
             'loader': [self.OFF, self.loaderChanged],
             'cells': [[], self.cellsChanged],
-            'thermal_sensors': [[], self.thermal_sensorsChanged]
+            'thermal_sensors': [[1], self.thermal_sensorsChanged]
         }
 
+        self.batteryModel = BatteryModel(self.update_needed['thermal_sensors'][0])
         self.timer = Timer(5, self.foo)
         self.timer.start()
 
@@ -73,6 +75,7 @@ class BatteryStatus(QObject):
 
     def foo(self):
         self.update(soc=90)
+        self.batteryModel.dataReceived.emit(2)
 
     def update(self, **kwargs):
         for k, v in kwargs.items():

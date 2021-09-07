@@ -3,17 +3,20 @@ from threading import Timer
 
 
 class BatteryModel(QAbstractListModel):
-    def __init__(self, parent=None):
+    dataReceived = pyqtSignal(int)
+
+    def __init__(self, datas: [], parent=None):
         super(QAbstractListModel, self).__init__(parent)
         self.role = Qt.UserRole
         self.m_roleNames = {self.role:b'name', self.role+1:b'number'}
-        self.label = ['电压', '电流', 'SOC', 'SOH', '系统模式']
-        self.battery_data = ['4.2V', '3A', '65%', '50%', '充电']
-        self.timer = Timer(5, self.update)
-        self.timer.start()
+        self.label = datas
+        self.battery_data = datas
+        self.dataReceived.connect(self.update)
 
     def data(self, index: QModelIndex, role=None):
         """ data(self, QModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any """
+        print('xxx')
+        print(index.row())
 
         if role == self.role:
             return self.label[index.row()]
@@ -27,9 +30,18 @@ class BatteryModel(QAbstractListModel):
 
     def rowCount(self, parent=None, *args, **kwargs):
         """ rowCount(self, parent: QModelIndex = QModelIndex()) -> int """
-        return 5
+        print(len(self.battery_data))
+        return len(self.battery_data)
 
-    def update(self):
-        ix = self.index(0, 0)
-        self.battery_data[0] = '3.5V'
-        self.dataChanged.emit(ix, ix, self.roleNames())
+    @pyqtSlot( int)
+    def update(self, data):
+        # ix = self.index(0, 0)
+        # self.battery_data[0] = '3.5V'
+        # self.dataChanged.emit(ix, ix, self.roleNames())
+        # self.beginResetModel()
+        # self.battery_data = [1, 2, 3, 4, 5]
+        # self.endResetModel()
+        self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
+        self.battery_data.append(data)
+        self.endInsertRows()
+        print(self.battery_data)

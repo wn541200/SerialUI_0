@@ -26,7 +26,8 @@ if __name__ == '__main__':
     batteryStatus = BatteryStatus()
     engine.rootContext().setContextProperty("batteryStatus", batteryStatus)
     # battery = BatteryModel()
-    # engine.rootContext().setContextProperty("battery", battery)
+    battery = batteryStatus.batteryModel
+    engine.rootContext().setContextProperty("battery", battery)
     engine.load(QUrl('UI/MainWindow.qml'))
 
     t = threading.currentThread()
