@@ -121,10 +121,7 @@ Rectangle {
 			
 			GroupBox {
 				anchors.fill: parent
-				anchors.topMargin: 5
-				anchors.bottomMargin: 5
-				anchors.leftMargin: 5
-				anchors.rightMargin: 5
+				anchors.margins: 5
 				clip: true
 				title: "温度(°c)"
 
@@ -166,10 +163,7 @@ Rectangle {
 			
 			GroupBox {
 				anchors.fill: parent
-				anchors.topMargin: 5
-				anchors.bottomMargin: 5
-				anchors.leftMargin: 5
-				anchors.rightMargin: 5
+				anchors.margins: 5
 				title: "系统状态"
 				
 				Column {
@@ -287,10 +281,7 @@ Rectangle {
 			
 			GroupBox {
 				anchors.fill: parent
-				anchors.topMargin: 5
-				anchors.bottomMargin: 5
-				anchors.leftMargin: 5
-				anchors.rightMargin: 5
+				anchors.margins: 5
 				title: "报警状态"
 				
 				TextArea {
@@ -343,10 +334,7 @@ Rectangle {
 			
 			GroupBox {
 				anchors.fill: parent
-				anchors.topMargin: 5
-				anchors.bottomMargin: 5
-				anchors.leftMargin: 5
-				anchors.rightMargin: 5
+				anchors.margins: 5
 				title: "单体电压(mV)"
 			}
 		}
@@ -360,10 +348,7 @@ Rectangle {
 			
 			GroupBox {
 				anchors.fill: parent
-				anchors.topMargin: 5
-				anchors.bottomMargin: 5
-				anchors.leftMargin: 5
-				anchors.rightMargin: 5
+				anchors.margins: 5
 				title: "保护状态"
 				
 				TextArea {
@@ -411,10 +396,7 @@ Rectangle {
 			
 			GroupBox {
 				anchors.fill: parent
-				anchors.topMargin: 5
-				anchors.bottomMargin: 5
-				anchors.leftMargin: 5
-				anchors.rightMargin: 5
+				anchors.margins: 5
 				title: "故障状态"
 				
 				TextArea {
@@ -462,10 +444,7 @@ Rectangle {
 			
 			GroupBox {
 				anchors.fill: parent
-				anchors.topMargin: 5
-				anchors.bottomMargin: 5
-				anchors.leftMargin: 5
-				anchors.rightMargin: 5
+				anchors.margins: 5
 				title: "控制"
 				
 				Label {

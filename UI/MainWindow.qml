@@ -43,7 +43,7 @@ Window {
 		
 		Tab {
             title: "参数设置"
-             source: "HistoryRecord.qml"
+             source: "SettingsTab.qml"
         }
 
         Tab {
