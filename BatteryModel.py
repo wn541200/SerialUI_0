@@ -15,8 +15,6 @@ class BatteryModel(QAbstractListModel):
 
     def data(self, index: QModelIndex, role=None):
         """ data(self, QModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any """
-        print('xxx')
-        print(index.row())
 
         if role == self.role:
             return self.label[index.row()]
