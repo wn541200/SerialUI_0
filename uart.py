@@ -7,13 +7,13 @@ import queue
 from PyQt5.QtCore import *
 
 from rawprotocol import RawProtocol
-from dbjprotocol import DBJProtocol
 
 
 # 该类型导入到qml中，该类型的对象在qml中实例化
 # qmlRegisterType(Uart, 'UartModule', 1, 0, 'UartModule')
 class Uart(QObject):
     dataReceived = pyqtSignal(str, arguments=["uartData"])  # 定义信号,qml中的处理函数的参数名为uartData，类型为string
+    rawDataReceeved = pyqtSignal(bytes)
     comPortChanged = pyqtSignal(str)
     baudRateChanged = pyqtSignal(str)
     hexModeChanged = pyqtSignal(bool)
@@ -29,7 +29,6 @@ class Uart(QObject):
         self.com_port = ''
         self.baud_rate = ''
         self.hex_mode = False
-        self.dbj = DBJProtocol()
         # install this to hook child thread exception
         threading.excepthook = self.subthread_excepthook
 
@@ -99,10 +98,8 @@ class Uart(QObject):
             self.transport, self.protocol = self.module_thread.connect()
             # 注册串口收到数据时的回调函数
             self.protocol.register_event_listener(self.on_uart_event)
-            self.protocol.register_event_listener(self.dbj.on_uart_event)
         except Exception as e:
             self.stop()
-            self.dbj.clear()
             self.uartError.emit('uart open fail')
             print(e)
 
@@ -116,7 +113,6 @@ class Uart(QObject):
         self.module_thread = None
         self.transport = None
         self.protocol = None
-        self.dbj.clear()
 
     # 输入框的数据要发送到串口调用这个函数
     # UI上显示的字符都是unicode的,转为byte再发送
@@ -136,8 +132,7 @@ class Uart(QObject):
                         return
                     send_buf.append(num)
                     data = data[2:].strip()
-                # self.transport.write(bytes(send_buf))
-                self.dbj.command(self.transport, bytes(send_buf))
+                self.transport.write(bytes(send_buf))
             else:
                 self.transport.write(data.encode('utf-8'))
 
@@ -147,6 +142,8 @@ class Uart(QObject):
         # self.data_queue.put(data)
         # if not self.data_queue.empty():
         # print(data)
+        self.rawDataReceeved.emit(data)
+
         if self.hex_mode:
             str_buffer = ''
             for byte in data:

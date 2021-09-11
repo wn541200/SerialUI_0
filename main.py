@@ -8,8 +8,7 @@ from PyQt5.QtQml import qmlRegisterType, QQmlComponent, QQmlEngine
 import sys
 import time
 from uart import Uart
-# from BatteryModel import BatteryModel
-from battery import BatteryStatus
+from MCUModule import MCUModule
 
 import threading
 
@@ -20,14 +19,12 @@ if __name__ == '__main__':
 
     # qmlRegisterType(BatteryModel, 'BatteryModel', 1, 0, 'BatteryModel')
     engine = QtQml.QQmlApplicationEngine()
-    uart = Uart()
-    engine.rootContext().setContextProperty("uart", uart)
 
-    batteryStatus = BatteryStatus()
-    engine.rootContext().setContextProperty("batteryStatus", batteryStatus)
-    # battery = BatteryModel()
-    battery = batteryStatus.batteryModel
-    engine.rootContext().setContextProperty("battery", battery)
+    mcuModule = MCUModule()
+    engine.rootContext().setContextProperty("uart", mcuModule.uartModule)
+    engine.rootContext().setContextProperty("batteryStatus", mcuModule.batteryStatus)
+    engine.rootContext().setContextProperty("battery", mcuModule.batteryStatus.batteryModel)
+
     engine.load(QUrl('UI/MainWindow.qml'))
 
     t = threading.currentThread()

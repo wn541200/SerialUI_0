@@ -57,6 +57,11 @@ class BatteryStatus(QObject):
     def voltage(self):
         return str(self.update_needed['voltage'][0])
 
+    @voltage.setter
+    def voltage(self, value):
+        self.update_needed['voltage'][0] = value
+        self.voltageChanged.emit(value)
+
     @pyqtProperty(str, notify=currentChanged)
     def current(self):
         return str(self.update_needed['current'][0])

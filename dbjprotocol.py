@@ -1,17 +1,23 @@
 import queue
 import threading
 import time
-import serial
+from PyQt5.QtCore import *
 
 
-class DBJProtocol():
+class DBJProtocol(QObject):
     START = b'NB'
 
-    def __init__(self):
+    voltageChanged = pyqtSignal(str, int)
+
+    def __init__(self, parent=None):
+        super(QObject, self).__init__(parent)
         self.responses = queue.Queue()
         self.events = queue.Queue()
         self.lock = threading.Lock()
         self.buffer = bytearray()
+        self.action = {
+            30: self.code_30_function
+        }
 
     def clear(self):
         self.responses.put('')
@@ -37,9 +43,6 @@ class DBJProtocol():
         end = time.time()
         print(end-start)
 
-    def packet_parse(self, packet):
-        print(packet)
-
     def on_uart_event(self, data):
         self.buffer.extend(data)
         if b'NB' in self.buffer:
@@ -48,12 +51,31 @@ class DBJProtocol():
                 data_len = self.buffer[start+4]
                 packet = self.buffer[start:start+5+data_len+1]
                 del self.buffer[:start+5+data_len+1]
-                self.packet_parse(packet)
+                self.parse_received_packet(packet)
                 self.responses.put(b'OK')
             except Exception as e:
                 print(e)
 
+    def parse_received_packet(self, packet):
+        print(packet)
+        print('function code:' + str(packet[4]))
 
-        # print(self.buffer)
+        code = int(packet[4])
+        if code in self.action:
+            func = self.action[code]
+            data_len = int(packet[5])
+            if data_len > 0:
+                data = packet[6:6+data_len]
+            else:
+                data = None
+            func(data)
+        else:
+            print('功能码未实现：' + str(packet[4]))
 
+    def code_30_function(self, data):
+        print(data)
+        if data is not None:
+            battery_total_voltage = int(data[0] | (data[1] << 8))
+            self.voltageChanged.emit('voltage', battery_total_voltage)
+            print(battery_total_voltage)
 
