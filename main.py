@@ -24,6 +24,7 @@ if __name__ == '__main__':
     engine.rootContext().setContextProperty("uart", mcuModule.uartModule)
     engine.rootContext().setContextProperty("batteryStatus", mcuModule.batteryStatus)
     engine.rootContext().setContextProperty("battery", mcuModule.batteryStatus.batteryModel)
+    engine.rootContext().setContextProperty("batterySettingsModel", mcuModule.batterySettings)
 
     engine.load(QUrl('UI/MainWindow.qml'))
 

@@ -8,6 +8,7 @@ class DBJProtocol(QObject):
     START = b'NB'
 
     voltageChanged = pyqtSignal(str, int)
+    port_send_request_signal = pyqtSignal(bytes)
 
     def __init__(self, parent=None):
         super(QObject, self).__init__(parent)
@@ -23,14 +24,14 @@ class DBJProtocol(QObject):
         self.responses.put('')
         del self.buffer[:]
 
-    def command(self, transport, command, response='OK', timeout=1):
-        uart_write_and_wait_respond_thread = threading.Thread(target=self._run_event, args=(transport, command, timeout))
+    def command(self, command, response='OK', timeout=1):
+        uart_write_and_wait_respond_thread = threading.Thread(target=self._run_event, args=(command, timeout))
         uart_write_and_wait_respond_thread.start()
 
-    def _run_event(self, transport, command, timeout):
+    def _run_event(self, command, timeout):
         start = time.time()
         with self.lock:
-            transport.write(command)
+            self.port_send_request_signal.emit(command)
             while True:
                 try:
                     r = self.responses.get(timeout=timeout)

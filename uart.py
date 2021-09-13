@@ -114,7 +114,7 @@ class Uart(QObject):
         self.transport = None
         self.protocol = None
 
-    # 输入框的数据要发送到串口调用这个函数
+    # Debug UI使用，输入框的数据要发送到串口调用这个函数
     # UI上显示的字符都是unicode的,转为byte再发送
     @pyqtSlot(str)
     def set_text(self, data):
@@ -152,3 +152,7 @@ class Uart(QObject):
             self.dataReceived.emit(str_buffer)
         else:
             self.dataReceived.emit(str(data, encoding='utf-8', errors='ignore'))
+
+    def send(self, data:bytes):
+        if self.transport:
+            self.transport.write(data)
