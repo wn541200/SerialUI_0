@@ -21,7 +21,7 @@ class BatterySettings(QAbstractListModel):
         self.role = Qt.UserRole
         self.m_roleNames = {
                             self.role: b'name',
-                            self.role + 1: b'enabled',
+                            self.role + 1: b'itemEnabled',
                             self.role + 2: b'protect_threshold',
                             self.role + 3: b'protect_hysteresis',
                             self.role + 4: b'protect_threshold_delay',
@@ -70,6 +70,24 @@ class BatterySettings(QAbstractListModel):
             15: 'environment_over_temperature'
         }
 
+        self.settings['cell_over_voltage'].name = '单体过压'
+        self.settings['cell_under_voltage'].name = '单体欠压'
+        self.settings['total_over_voltage'].name = '总体过压'
+        self.settings['total_under_voltage'].name = '总体欠压'
+        self.settings['discharging_over_current'].name = '放电过流'
+        self.settings['charging_over_current'].name = '充电过流'
+        self.settings['soc_over_threshold'].name = 'SOC过高'
+        self.settings['soc_under_threshold'].name = 'SOC过低'
+
+        self.settings['discharging_over_temperature'].name = '放电高温'
+        self.settings['charging_over_temperature'].name = '充电高温'
+        self.settings['discharging_under_temperature'].name = '放电低温'
+        self.settings['charging_under_temperature'].name = '充电低温'
+        self.settings['voltage_diff_great'].name = '压差过大'
+        self.settings['temperature_diff_great'].name = '温差过大'
+        self.settings['mos_over_temperature'].name = 'MOS高温'
+        self.settings['environment_over_temperature'].name = '环境高温'
+
     def data(self, index: QModelIndex, role=None):
         """ data(self, QModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any """
 
@@ -105,6 +123,23 @@ class BatterySettings(QAbstractListModel):
 
     def rowCount(self, parent=None, *args, **kwargs):
         """ rowCount(self, parent: QModelIndex = QModelIndex()) -> int """
-        print(len(self.settings))
         return len(self.settings)
 
+    @pyqtSlot(int, bool, int, int, int, int, int, int)
+    def setItem(self, row, enabled, protect_threshold, protect_hysteresis, protect_threshold_delay,
+                protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay):
+        ix = self.index(row, 0)
+        item_name = self.index_map[row]
+        item = self.settings[item_name]
+        item.enabled = enabled
+        item.protect_threshold = protect_threshold
+        item.protect_hysteresis = protect_hysteresis
+        item.protect_threshold_delay = protect_threshold_delay
+        item.protect_hysteresis_delay = protect_hysteresis_delay
+        item.alarm_threshold = alarm_threshold
+        item.alarm_threshold_delay = alarm_threshold_delay
+        self.dataChanged.emit(ix, ix, self.roleNames())
+
+    @pyqtSlot(int)
+    def readItemFromMCU(self, row):
+        print(row)
