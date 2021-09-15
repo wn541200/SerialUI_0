@@ -28,7 +28,6 @@ class BatteryModel(QAbstractListModel):
 
     def rowCount(self, parent=None, *args, **kwargs):
         """ rowCount(self, parent: QModelIndex = QModelIndex()) -> int """
-        print(len(self.battery_data))
         return len(self.battery_data)
 
     @pyqtSlot( int)

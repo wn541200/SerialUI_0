@@ -19,6 +19,9 @@ class MCUModule(QObject):
         # 发送协议模块的command到uart
         self.protocol.port_send_request_signal.connect(self.uartModule.send)
 
+        self.batterySettings.read_battery_signal.connect(self.protocol.command_read_mcu)
+        self.batterySettings.write_battery_signal.connect(self.protocol.command_write_mcu)
+
         self.protocol.voltageChanged.connect(self.batteryStatus.update)
         # 4e 42 01 00 1e 02 8a 0c
 

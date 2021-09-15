@@ -14,7 +14,8 @@ class SettingItem(object):
 
 
 class BatterySettings(QAbstractListModel):
-    set_param_to_battery_signal = pyqtSignal(str, object)
+    read_battery_signal = pyqtSignal(str, object)
+    write_battery_signal = pyqtSignal(str, object)
 
     def __init__(self, parent=None):
         super(QAbstractListModel, self).__init__(parent)
@@ -139,7 +140,11 @@ class BatterySettings(QAbstractListModel):
         item.alarm_threshold = alarm_threshold
         item.alarm_threshold_delay = alarm_threshold_delay
         self.dataChanged.emit(ix, ix, self.roleNames())
+        self.write_battery_signal.emit(item_name, self.settings[item_name])
 
     @pyqtSlot(int)
     def readItemFromMCU(self, row):
-        print(row)
+        item_name = self.index_map[row]
+        self.read_battery_signal.emit(item_name, self.settings[item_name])
+
+    # def settingsToMCU(self):

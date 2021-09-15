@@ -156,3 +156,4 @@ class Uart(QObject):
     def send(self, data:bytes):
         if self.transport:
             self.transport.write(data)
+            print(data)
