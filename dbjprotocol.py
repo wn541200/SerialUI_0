@@ -20,22 +20,22 @@ class DBJProtocol(QObject):
             30: self.code_30_function
         }
         self.function_map = {
-            'cell_over_voltage': [40, self.readBatterySettingItem, self.writeBatterySettingItem],
-            'cell_under_voltage': [41, self.readBatterySettingItem, self.writeBatterySettingItem],
-            'total_over_voltage': [42, self.readBatterySettingItem, self.writeBatterySettingItem],
-            'total_under_voltage': [43, self.readBatterySettingItem, self.writeBatterySettingItem],
-            'discharging_over_current': [44, self.readBatterySettingItem, self.writeBatterySettingItem],
-            'charging_over_current': [45, self.readBatterySettingItem, self.writeBatterySettingItem],
-            'soc_over_threshold': [46, self.readBatterySettingItem, self.writeBatterySettingItem],
-            'soc_under_threshold': [47, self.readBatterySettingItem, self.writeBatterySettingItem],
-            'discharging_over_temperature': [48, self.readBatterySettingItem, self.writeBatterySettingItem],
-            'charging_over_temperature': [49, self.readBatterySettingItem, self.writeBatterySettingItem],
-            'discharging_under_temperature': [50, self.readBatterySettingItem, self.writeBatterySettingItem],
-            'charging_under_temperature': [51, self.readBatterySettingItem, self.writeBatterySettingItem],
-            'voltage_diff_great': [52, self.readBatterySettingItem, self.writeBatterySettingItem],
-            'temperature_diff_great': [53, self.readBatterySettingItem, self.writeBatterySettingItem],
-            'mos_over_temperature': [54, self.readBatterySettingItem, self.writeBatterySettingItem],
-            'environment_over_temperature': [55, self.readBatterySettingItem, self.writeBatterySettingItem]
+            'cell_over_voltage': [40, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
+            'cell_under_voltage': [41, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
+            'total_over_voltage': [42, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
+            'total_under_voltage': [43, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
+            'discharging_over_current': [44, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
+            'charging_over_current': [45, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
+            'soc_over_threshold': [46, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
+            'soc_under_threshold': [47, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
+            'discharging_over_temperature': [48, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
+            'charging_over_temperature': [49, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
+            'discharging_under_temperature': [50, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
+            'charging_under_temperature': [51, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
+            'voltage_diff_great': [52, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
+            'temperature_diff_great': [53, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
+            'mos_over_temperature': [54, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
+            'environment_over_temperature': [55, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback]
 
         }
 
@@ -96,17 +96,36 @@ class DBJProtocol(QObject):
         print(packet)
         print('function code:' + str(packet[4]))
 
+        # 获取读写标记
+        op = int(packet[3])
+        # 提取接受到的数据的功能码
         code = int(packet[4])
-        if code in self.action:
-            func = self.action[code]
-            data_len = int(packet[5])
-            if data_len > 0:
-                data = packet[6:6+data_len]
-            else:
-                data = None
-            func(data)
-        else:
-            print('功能码未实现：' + str(packet[4]))
+        # 找到对应功能码的回调处理函数
+        for k, v in self.function_map.items():
+            if v[0] == code:
+                if op == 1:
+                    func = v[3]
+                else:
+                    func = v[4]
+
+                data_len = int(packet[5])
+                if data_len > 0:
+                    data = packet[6:6 + data_len]
+                else:
+                    data = None
+                func(data)
+                break
+
+        # if code in self.action:
+        #     func = self.action[code]
+        #     data_len = int(packet[5])
+        #     if data_len > 0:
+        #         data = packet[6:6+data_len]
+        #     else:
+        #         data = None
+        #     func(data)
+        # else:
+        #     print('功能码未实现：' + str(packet[4]))
 
     def code_30_function(self, data):
         print(data)
@@ -142,3 +161,11 @@ class DBJProtocol(QObject):
 
 
             self.command(bytes(send_buffer))
+
+    def readCallback(self, data):
+        print('readCallback')
+        print(data)
+
+    def writeCallback(self, data):
+        print('writeCallback')
+        print(data)
