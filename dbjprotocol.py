@@ -5,9 +5,9 @@ from PyQt5.QtCore import *
 
 
 class DBJProtocol(QObject):
-    START = b'NB'
+    START = b'\x3a\x7e'
 
-    voltageChanged = pyqtSignal(str, int)
+    batteryStatusChanged = pyqtSignal(str, str)
     port_send_request_signal = pyqtSignal(bytes)
 
     def __init__(self, parent=None):
@@ -20,6 +20,7 @@ class DBJProtocol(QObject):
             30: self.code_30_function
         }
         self.function_map = {
+            'battery_status': [30, self.readBatteryStatus30, None, self.readBatteryStatus30Callback, None],
             'cell_over_voltage': [40, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
             'cell_under_voltage': [41, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
             'total_over_voltage': [42, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
@@ -79,13 +80,18 @@ class DBJProtocol(QObject):
         print(end-start)
 
     def on_uart_event(self, data):
-        print(data)
+        # print(data)
         self.buffer.extend(data)
-        if b'NB' in self.buffer:
-            start = self.buffer.index(b'N')
+        if b';~' in self.buffer:
+            start = self.buffer.index(b';')
             try:
-                data_len = self.buffer[start+4]
+                data_len = self.buffer[start+5]
+                # print(int(data_len))
+                # print(len(self.buffer))
+                if len(self.buffer) < int(data_len)+7:
+                    return
                 packet = self.buffer[start:start+5+data_len+1]
+                print()
                 del self.buffer[:start+5+data_len+1]
                 self.parse_received_packet(packet)
                 self.responses.put(b'OK')
@@ -93,7 +99,7 @@ class DBJProtocol(QObject):
                 print(e)
 
     def parse_received_packet(self, packet):
-        print(packet)
+        #print(packet)
         print('function code:' + str(packet[4]))
 
         # 获取读写标记
@@ -128,44 +134,74 @@ class DBJProtocol(QObject):
         #     print('功能码未实现：' + str(packet[4]))
 
     def code_30_function(self, data):
-        print(data)
+        #print(data)
         if data is not None:
             battery_total_voltage = int(data[0] | (data[1] << 8))
             self.voltageChanged.emit('voltage', battery_total_voltage)
             print(battery_total_voltage)
 
-    def readBatterySettingItem(self, code, data):
-            send_buffer = bytearray()
-            send_buffer.extend(self.START)
-            send_buffer.extend(b'\x01')
-            send_buffer.extend(b'\x01')
-            send_buffer.extend(code)
-            send_buffer.extend(b'\x00')
+    def readBatteryStatus30(self, code):
+        send_buffer = bytearray()
+        send_buffer.extend(self.START)
+        send_buffer.extend(b'\x01')
+        send_buffer.extend(b'\x01')
+        send_buffer.extend(code.to_bytes(length=1, byteorder='little'))
+        send_buffer.extend(b'\x00')
+        crc = 0
+        for c in send_buffer:
+            crc = crc + int(c)
 
-            self.command(bytes(send_buffer))
+        crc = crc % 0xff
+        send_buffer.extend(crc.to_bytes(length=1, byteorder='little'))
+
+        self.command(bytes(send_buffer))
+        print(send_buffer)
+
+    def readBatteryStatus30Callback(self, data):
+        print('xxxxx')
+        print(data)
+        battery_total_voltage = int(data[0] | (data[1] << 8))
+        self.batteryStatusChanged.emit('voltage', str(battery_total_voltage*0.01))
+
+        battery_total_current = int(data[2] | (data[3] << 8))
+        self.batteryStatusChanged.emit('current', str(battery_total_current*0.01))
+
+        battery_soc = int(data[4] | (data[5] << 8))
+        self.batteryStatusChanged.emit('soc', str(battery_soc*.002))
+
+        battery_soh = int(data[6] | (data[7] << 8))
+        self.batteryStatusChanged.emit('soh', str(battery_soh))
+
+
+    def readBatterySettingItem(self, code, data):
+        send_buffer = bytearray()
+        send_buffer.extend(self.START)
+        send_buffer.extend(b'\x01')
+        send_buffer.extend(b'\x01')
+        send_buffer.extend(code)
+        send_buffer.extend(b'\x00')
+
+        self.command(bytes(send_buffer))
 
     def writeBatterySettingItem(self, code, data):
-            send_buffer = bytearray()
-            send_buffer.extend(self.START)
-            send_buffer.extend(b'\x01')
-            send_buffer.extend(b'\x00')
-            send_buffer.extend(code)
-            send_buffer.extend(b'\x0d')
-            send_buffer.extend(int(data.protect_threshold).to_bytes(length=2, byteorder='little'))
-            send_buffer.extend(int(data.protect_hysteresis).to_bytes(length=2, byteorder='little'))
-            send_buffer.extend(int(data.protect_threshold_delay).to_bytes(length=2, byteorder='little'))
-            send_buffer.extend(int(data.protect_hysteresis_delay).to_bytes(length=2, byteorder='little'))
-            send_buffer.extend(int(data.alarm_threshold).to_bytes(length=2, byteorder='little'))
-            send_buffer.extend(int(data.alarm_threshold_delay).to_bytes(length=2, byteorder='little'))
-            send_buffer.extend(int(data.enabled).to_bytes(length=2, byteorder='little'))
+        send_buffer = bytearray()
+        send_buffer.extend(self.START)
+        send_buffer.extend(b'\x01')
+        send_buffer.extend(b'\x00')
+        send_buffer.extend(code)
+        send_buffer.extend(b'\x0d')
+        send_buffer.extend(int(data.protect_threshold).to_bytes(length=2, byteorder='little'))
+        send_buffer.extend(int(data.protect_hysteresis).to_bytes(length=2, byteorder='little'))
+        send_buffer.extend(int(data.protect_threshold_delay).to_bytes(length=2, byteorder='little'))
+        send_buffer.extend(int(data.protect_hysteresis_delay).to_bytes(length=2, byteorder='little'))
+        send_buffer.extend(int(data.alarm_threshold).to_bytes(length=2, byteorder='little'))
+        send_buffer.extend(int(data.alarm_threshold_delay).to_bytes(length=2, byteorder='little'))
+        send_buffer.extend(int(data.enabled).to_bytes(length=2, byteorder='little'))
 
-
-            self.command(bytes(send_buffer))
+        self.command(bytes(send_buffer))
 
     def readCallback(self, data):
         print('readCallback')
-        print(data)
 
     def writeCallback(self, data):
         print('writeCallback')
-        print(data)

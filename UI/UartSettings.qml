@@ -80,7 +80,7 @@ Rectangle {
                     id: baud_rate
                     Layout.fillWidth: true
                     height: 30
-                    model : ['115200', '9600']
+                    model : ['9600', '115200']
 
                     onActivated: {
                         uart.baudRate = currentText

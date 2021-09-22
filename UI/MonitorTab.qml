@@ -125,10 +125,42 @@ Rectangle {
 				clip: true
 				title: "温度(°c)"
 
-				GridView{
+				Rectangle {
+				    width: parent.width
+				    height: parent.height / 10
+				    color: "lightgray"
+				    radius: 3
+
+				    Rectangle {
+				        id: maxTemperatureRectangle
+				        width: parent.width / 2
+				        height: parent.height
+				        color: "lightgray"
+				        Text {
+                            anchors.centerIn: parent
+                            font.pointSize: 12
+                            text: "最高温度(" + batteryStatus.max_cell_number_temperature + "):" + batteryStatus.max_cell_temperature
+                        }
+				    }
+
+				    Rectangle {
+				        id: minTemperatureRectangle
+				        anchors.left: maxTemperatureRectangle.right
+				        width: parent.width / 2
+				        height: parent.height
+				        color: "lightgray"
+				        Text {
+                            anchors.centerIn: parent
+                            font.pointSize: 12
+                            text: "最低温度(" + batteryStatus.min_cell_number_temperature + "):" + batteryStatus.min_cell_temperature
+                        }
+				    }
+				}
+
+				GridView {
                     id: temperatureView
                     anchors.fill: parent
-                    anchors.topMargin: 10
+                    anchors.topMargin: parent.height / 8
                     cellWidth: 120
                     cellHeight: 40
 
@@ -501,6 +533,9 @@ Rectangle {
                     x: 205
                     y: 61
                     text: qsTr("开")
+                    onClicked: {
+                        batteryStatus.readBattery(30)
+                    }
                 }
 			}
 		}
