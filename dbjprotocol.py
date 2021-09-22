@@ -161,16 +161,43 @@ class DBJProtocol(QObject):
         print('xxxxx')
         print(data)
         battery_total_voltage = int(data[0] | (data[1] << 8))
-        self.batteryStatusChanged.emit('voltage', str(battery_total_voltage*0.01))
+        self.batteryStatusChanged.emit('voltage', str(round(battery_total_voltage*0.01, 2)))
 
         battery_total_current = int(data[2] | (data[3] << 8))
-        self.batteryStatusChanged.emit('current', str(battery_total_current*0.01))
+        self.batteryStatusChanged.emit('current', str(round(battery_total_current*0.01, 2)))
 
         battery_soc = int(data[4] | (data[5] << 8))
-        self.batteryStatusChanged.emit('soc', str(battery_soc*.002))
+        self.batteryStatusChanged.emit('soc', str(battery_soc*0.02))
 
         battery_soh = int(data[6] | (data[7] << 8))
         self.batteryStatusChanged.emit('soh', str(battery_soh))
+
+        battery_max_cell_voltage = int(data[8] | (data[9] << 8))
+        self.batteryStatusChanged.emit('maxCellVoltage', str(round(battery_max_cell_voltage*0.01, 2)))
+
+        battery_max_cell_number_voltage = int(data[10] | (data[11] << 8))
+        self.batteryStatusChanged.emit('maxCellVoltageNr', str(battery_max_cell_number_voltage))
+
+        battery_min_cell_voltage = int(data[12] | (data[13] << 8))
+        self.batteryStatusChanged.emit('minCellVoltage', str(round(battery_min_cell_voltage*0.01, 2)))
+
+        battery_min_cell_number_voltage = int(data[14] | (data[15] << 8))
+        self.batteryStatusChanged.emit('minCellVoltageNr', str(battery_min_cell_number_voltage))
+
+        battery_max_cells_voltage_diff = int(data[16] | (data[17] << 8))
+        self.batteryStatusChanged.emit('maxCellsVoltageDiff', str(round(battery_max_cells_voltage_diff*0.01, 2)))
+
+        battery_max_cell_temperature = int(data[18] | (data[19] << 8))
+        self.batteryStatusChanged.emit('maxCellTemperature', str(round((battery_max_cell_temperature-2731)*0.1, 2)))
+
+        battery_max_cell_number_temperature = int(data[20] | (data[21] << 8))
+        self.batteryStatusChanged.emit('maxCellTemperatureNr', str(battery_max_cell_number_temperature))
+
+        battery_min_cell_temperature = int(data[22] | (data[23] << 8))
+        self.batteryStatusChanged.emit('minCellTemperature', str(round((battery_min_cell_temperature-2731)*0.1, 2)))
+
+        battery_min_cell_number_temperature = int(data[24] | (data[25] << 8))
+        self.batteryStatusChanged.emit('minCellTemperatureNr', str(battery_min_cell_number_temperature))
 
 
     def readBatterySettingItem(self, code, data):

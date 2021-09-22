@@ -368,6 +368,51 @@ Rectangle {
 				anchors.fill: parent
 				anchors.margins: 5
 				title: "单体电压(mV)"
+				
+				Rectangle {
+				    width: parent.width
+				    height: parent.height / 10
+				    color: "lightgray"
+				    radius: 3
+
+				    Rectangle {
+				        id: maxCellVoltageRectangle
+				        width: parent.width / 3
+				        height: parent.height
+				        color: "lightgray"
+				        Text {
+                            anchors.centerIn: parent
+                            font.pointSize: 12
+                            text: "最高电压(" + batteryStatus.max_cell_number_voltage + "):" + batteryStatus.max_cell_voltage + "V"
+                        }
+				    }
+
+				    Rectangle {
+				        id: minCellVoltageRectangle
+				        anchors.left: maxCellVoltageRectangle.right
+				        width: parent.width / 3
+				        height: parent.height
+				        color: "lightgray"
+				        Text {
+                            anchors.centerIn: parent
+                            font.pointSize: 12
+                            text: "最低电压(" + batteryStatus.min_cell_number_voltage + "):" + batteryStatus.min_cell_voltage + "V"
+                        }
+				    }
+					
+					Rectangle {
+				        anchors.left: minCellVoltageRectangle.right
+				        width: parent.width / 3
+				        height: parent.height
+				        color: "lightgray"
+				        Text {
+                            anchors.centerIn: parent
+                            font.pointSize: 12
+                            text: "最大压差:" + batteryStatus.max_cells_voltage_diff + "V"
+                        }
+				    }
+				
+				}
 			}
 		}
 		
