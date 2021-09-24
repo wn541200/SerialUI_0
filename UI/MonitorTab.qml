@@ -139,7 +139,7 @@ Rectangle {
 				        Text {
                             anchors.centerIn: parent
                             font.pointSize: 12
-                            text: "最高温度(" + batteryStatus.max_cell_number_temperature + "):" + batteryStatus.max_cell_temperature
+                            text: "最高温度(" + batteryStatus.maxCellTemperatureNr + "):" + batteryStatus.maxCellTemperature
                         }
 				    }
 
@@ -152,7 +152,7 @@ Rectangle {
 				        Text {
                             anchors.centerIn: parent
                             font.pointSize: 12
-                            text: "最低温度(" + batteryStatus.min_cell_number_temperature + "):" + batteryStatus.min_cell_temperature
+                            text: "最低温度(" + batteryStatus.minCellTemperatureNr + "):" + batteryStatus.minCellTemperature
                         }
 				    }
 				}
@@ -383,7 +383,7 @@ Rectangle {
 				        Text {
                             anchors.centerIn: parent
                             font.pointSize: 12
-                            text: "最高电压(" + batteryStatus.max_cell_number_voltage + "):" + batteryStatus.max_cell_voltage + "V"
+                            text: "最高电压(" + batteryStatus.maxCellVoltageNr + "):" + batteryStatus.maxCellVoltage + "V"
                         }
 				    }
 
@@ -396,7 +396,7 @@ Rectangle {
 				        Text {
                             anchors.centerIn: parent
                             font.pointSize: 12
-                            text: "最低电压(" + batteryStatus.min_cell_number_voltage + "):" + batteryStatus.min_cell_voltage + "V"
+                            text: "最低电压(" + batteryStatus.minCellVoltageNr + "):" + batteryStatus.minCellVoltage + "V"
                         }
 				    }
 					
@@ -408,7 +408,7 @@ Rectangle {
 				        Text {
                             anchors.centerIn: parent
                             font.pointSize: 12
-                            text: "最大压差:" + batteryStatus.max_cells_voltage_diff + "V"
+                            text: "最大压差:" + batteryStatus.maxCellsVoltageDiff + "V"
                         }
 				    }
 				

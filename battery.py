@@ -23,53 +23,53 @@ class BatteryStatus(QObject):
     minCellTemperatureNrChanged = pyqtSignal(str)
     maxCellsVoltageDiffChanged = pyqtSignal(str)
 
-    cellOverVoltageAlarmChanged = pyqtSignal(bool)
-    cellUnderVoltageAlarmChanged = pyqtSignal(bool)
-    batteryOverVoltageAlarmChanged = pyqtSignal(bool)
-    batteryUnderVoltageAlarmChanged = pyqtSignal(bool)
-    batteryDischargingOverCurrentAlarmChanged = pyqtSignal(bool)
-    batteryChargingOverCurrentAlarmChanged = pyqtSignal(bool)
-    batteryDischargingOverTemperatureAlarmChanged = pyqtSignal(bool)
-    batteryChargingOverTemperatureAlarmChanged = pyqtSignal(bool)
-    batteryDischargingUnderTemperatureAlarmChanged = pyqtSignal(bool)
-    batteryChargingUnderTemperatureAlarmChanged = pyqtSignal(bool)
-    socOverThresholdAlarmChanged = pyqtSignal(bool)
-    socUnderThresholdAlarmChanged = pyqtSignal(bool)
-    voltageDiffAlarmChanged = pyqtSignal(bool)
-    temperatureDiffAlarmChanged = pyqtSignal(bool)
-    mosTemperatureHighAlarmChanged = pyqtSignal(bool)
-    envTemperatureHighAlarmChanged = pyqtSignal(bool)
+    cellOverVoltageAlarmChanged = pyqtSignal(str)
+    cellUnderVoltageAlarmChanged = pyqtSignal(str)
+    batteryOverVoltageAlarmChanged = pyqtSignal(str)
+    batteryUnderVoltageAlarmChanged = pyqtSignal(str)
+    batteryDischargingOverCurrentAlarmChanged = pyqtSignal(str)
+    batteryChargingOverCurrentAlarmChanged = pyqtSignal(str)
+    batteryDischargingOverTemperatureAlarmChanged = pyqtSignal(str)
+    batteryChargingOverTemperatureAlarmChanged = pyqtSignal(str)
+    batteryDischargingUnderTemperatureAlarmChanged = pyqtSignal(str)
+    batteryChargingUnderTemperatureAlarmChanged = pyqtSignal(str)
+    socOverThresholdAlarmChanged = pyqtSignal(str)
+    socUnderThresholdAlarmChanged = pyqtSignal(str)
+    voltageDiffAlarmChanged = pyqtSignal(str)
+    temperatureDiffAlarmChanged = pyqtSignal(str)
+    mosTemperatureHighAlarmChanged = pyqtSignal(str)
+    envTemperatureHighAlarmChanged = pyqtSignal(str)
 
-    cellOverVoltageProtectChanged = pyqtSignal(bool)
-    cellUnderVoltageProtectChanged = pyqtSignal(bool)
-    batteryOverVoltageProtectChanged = pyqtSignal(bool)
-    batteryUnderVoltageProtectChanged = pyqtSignal(bool)
-    batteryDischargingOverCurrentProtectChanged = pyqtSignal(bool)
-    batteryChargingOverCurrentProtectChanged = pyqtSignal(bool)
-    batteryDischargingOverTemperatureProtectChanged = pyqtSignal(bool)
-    batteryChargingOverTemperatureProtectChanged = pyqtSignal(bool)
-    batteryDischargingUnderTemperatureProtectChanged = pyqtSignal(bool)
-    batteryChargingUnderTemperatureProtectChanged = pyqtSignal(bool)
-    socOverThresholdProtectChanged = pyqtSignal(bool)
-    socUnderThresholdProtectChanged = pyqtSignal(bool)
-    voltageDiffProtectChanged = pyqtSignal(bool)
-    temperatureDiffProtectChanged = pyqtSignal(bool)
-    mosTemperatureHighProtectChanged = pyqtSignal(bool)
-    envTemperatureHighProtectChanged = pyqtSignal(bool)
+    cellOverVoltageProtectChanged = pyqtSignal(str)
+    cellUnderVoltageProtectChanged = pyqtSignal(str)
+    batteryOverVoltageProtectChanged = pyqtSignal(str)
+    batteryUnderVoltageProtectChanged = pyqtSignal(str)
+    batteryDischargingOverCurrentProtectChanged = pyqtSignal(str)
+    batteryChargingOverCurrentProtectChanged = pyqtSignal(str)
+    batteryDischargingOverTemperatureProtectChanged = pyqtSignal(str)
+    batteryChargingOverTemperatureProtectChanged = pyqtSignal(str)
+    batteryDischargingUnderTemperatureProtectChanged = pyqtSignal(str)
+    batteryChargingUnderTemperatureProtectChanged = pyqtSignal(str)
+    socOverThresholdProtectChanged = pyqtSignal(str)
+    socUnderThresholdProtectChanged = pyqtSignal(str)
+    voltageDiffProtectChanged = pyqtSignal(str)
+    temperatureDiffProtectChanged = pyqtSignal(str)
+    mosTemperatureHighProtectChanged = pyqtSignal(str)
+    envTemperatureHighProtectChanged = pyqtSignal(str)
 
-    dischargingMosNoFunctionChanged = pyqtSignal(bool)
-    chargingMosNoFunctionChanged = pyqtSignal(bool)
-    eepromWriteFailChanged = pyqtSignal(bool)
-    notChargingUnderVoltageChanged = pyqtSignal(bool)
-    shortProtectChanged = pyqtSignal(bool)
+    dischargingMosNoFunctionChanged = pyqtSignal(str)
+    chargingMosNoFunctionChanged = pyqtSignal(str)
+    eepromWriteFailChanged = pyqtSignal(str)
+    notChargingUnderVoltageChanged = pyqtSignal(str)
+    shortProtectChanged = pyqtSignal(str)
 
-    dischargingMosFetStatusChanged = pyqtSignal(bool)
-    chargingMosFetStatusChanged = pyqtSignal(bool)
-    preChargingMosFetStatusChanged = pyqtSignal(bool)
-    heaterSwitchChanged = pyqtSignal(bool)
-    gprsChanged = pyqtSignal(bool)
-    chargerAdapterPluginChanged = pyqtSignal(bool)
-    loaderConnectionChanged = pyqtSignal(bool)
+    dischargingMosFetStatusChanged = pyqtSignal(str)
+    chargingMosFetStatusChanged = pyqtSignal(str)
+    preChargingMosFetStatusChanged = pyqtSignal(str)
+    heaterSwitchChanged = pyqtSignal(str)
+    gprsChanged = pyqtSignal(str)
+    chargerAdapterPluginChanged = pyqtSignal(str)
+    loaderConnectionChanged = pyqtSignal(str)
 
     systemStatusChanged = pyqtSignal(str)
 
@@ -99,9 +99,54 @@ class BatteryStatus(QObject):
             'maxCellTemperatureNr': [0, self.maxCellTemperatureNrChanged],
             'minCellTemperature': [0, self.minCellTemperatureChanged],
             'minCellTemperatureNr': [0, self.minCellTemperatureNrChanged],
-            'cellOverVoltageAlarm': [False, self.cellOverVoltageAlarmChanged],
-            'cellUnderVoltageAlarm': [False, self.cellUnderVoltageAlarmChanged],
-            'batteryOverVoltageAlarm': [False, self.batteryOverVoltageAlarmChanged],
+
+            'cellOverVoltageAlarm': [0, self.cellOverVoltageAlarmChanged],
+            'cellUnderVoltageAlarm': [0, self.cellUnderVoltageAlarmChanged],
+            'batteryOverVoltageAlarm': [0, self.batteryOverVoltageAlarmChanged],
+            'batteryUnderVoltageAlarm': [0, self.batteryUnderVoltageAlarmChanged],
+            'batteryDischargingOverCurrentAlarm': [0, self.batteryDischargingOverCurrentAlarmChanged],
+            'batteryChargingOverCurrentAlarm': [0, self.batteryChargingOverCurrentAlarmChanged],
+            'batteryDischargingOverTemperatureAlarm': [0, self.batteryDischargingOverTemperatureAlarmChanged],
+            'batteryChargingOverTemperatureAlarm': [0, self.batteryChargingOverTemperatureAlarmChanged],
+            'batteryDischargingUnderTemperatureAlarm': [0, self.batteryDischargingUnderTemperatureAlarmChanged],
+            'batteryChargingUnderTemperatureAlarm': [0, self.batteryChargingUnderTemperatureAlarmChanged],
+            'socOverThresholdAlarm': [0, self.socOverThresholdAlarmChanged],
+            'socUnderThresholdAlarm': [0, self.socUnderThresholdAlarmChanged],
+            'voltageDiffAlarm': [0, self.voltageDiffAlarmChanged],
+            'temperatureDiffAlarm': [0, self.temperatureDiffAlarmChanged],
+            'mosTemperatureHighAlarm': [0, self.mosTemperatureHighAlarmChanged],
+            'envTemperatureHighAlarm': [0, self.envTemperatureHighAlarmChanged],
+
+            'cellOverVoltageProtect': [0, self.cellOverVoltageProtectChanged],
+            'cellUnderVoltageProtect': [0, self.cellUnderVoltageProtectChanged],
+            'batteryOverVoltageProtect': [0, self.batteryOverVoltageProtectChanged],
+            'batteryUnderVoltageProtect': [0, self.batteryUnderVoltageProtectChanged],
+            'batteryDischargingOverCurrentProtect': [0, self.batteryDischargingOverCurrentProtectChanged],
+            'batteryChargingOverCurrentProtect': [0, self.batteryChargingOverCurrentProtectChanged],
+            'batteryDischargingOverTemperatureProtect': [0, self.batteryDischargingOverTemperatureProtectChanged],
+            'batteryChargingOverTemperatureProtect': [0, self.batteryChargingOverTemperatureProtectChanged],
+            'batteryDischargingUnderTemperatureProtect': [0, self.batteryDischargingUnderTemperatureProtectChanged],
+            'batteryChargingUnderTemperatureProtect': [0, self.batteryChargingUnderTemperatureProtectChanged],
+            'socOverThresholdProtect': [0, self.socOverThresholdProtectChanged],
+            'socUnderThresholdProtect': [0, self.socUnderThresholdProtectChanged],
+            'voltageDiffProtect': [0, self.voltageDiffProtectChanged],
+            'temperatureDiffProtect': [0, self.temperatureDiffProtectChanged],
+            'mosTemperatureHighProtect': [0, self.mosTemperatureHighProtectChanged],
+            'envTemperatureHighProtect': [0, self.envTemperatureHighProtectChanged],
+
+            'dischargingMosNoFunction': [0, self.dischargingMosNoFunctionChanged],
+            'chargingMosNoFunction': [0, self.chargingMosNoFunctionChanged],
+            'eepromWriteFail': [0, self.eepromWriteFailChanged],
+            'notChargingUnderVoltage': [0, self.notChargingUnderVoltageChanged],
+            'shortProtect': [0, self.shortProtectChanged],
+
+            'dischargingMosFetStatus': [0, self.dischargingMosFetStatusChanged],
+            'chargingMosFetStatus': [0, self.chargingMosFetStatusChanged],
+            'preChargingMosFetStatus': [0, self.preChargingMosFetStatusChanged],
+            'heaterSwitch': [0, self.heaterSwitchChanged],
+            'gprs': [0, self.gprsChanged],
+            'chargerAdapterPlugin': [0, self.chargerAdapterPluginChanged],
+            'loaderConnection': [0, self.loaderConnectionChanged],
 
 
             'cells': [[], self.cellsChanged],
@@ -138,40 +183,216 @@ class BatteryStatus(QObject):
         return str(self.update_needed['soh'][0])
 
     @pyqtProperty(str, notify=maxCellVoltageChanged)
-    def max_cell_voltage(self):
+    def maxCellVoltage(self):
         return str(self.update_needed['maxCellVoltage'][0])
 
     @pyqtProperty(str, notify=maxCellVoltageNrChanged)
-    def max_cell_number_voltage(self):
+    def maxCellVoltageNr(self):
         return str(self.update_needed['maxCellVoltageNr'][0])
 
     @pyqtProperty(str, notify=minCellVoltageChanged)
-    def min_cell_voltage(self):
+    def minCellVoltage(self):
         return str(self.update_needed['minCellVoltage'][0])
 
     @pyqtProperty(str, notify=minCellVoltageNrChanged)
-    def min_cell_number_voltage(self):
+    def minCellVoltageNr(self):
         return str(self.update_needed['minCellVoltageNr'][0])
 
     @pyqtProperty(str, notify=maxCellsVoltageDiffChanged)
-    def max_cells_voltage_diff(self):
+    def maxCellsVoltageDiff(self):
         return str(self.update_needed['maxCellsVoltageDiff'][0])
 
     @pyqtProperty(str, notify=maxCellTemperatureChanged)
-    def max_cell_temperature(self):
+    def maxCellTemperature(self):
         return str(self.update_needed['maxCellTemperature'][0])
 
     @pyqtProperty(str, notify=maxCellTemperatureNrChanged)
-    def max_cell_number_temperature(self):
+    def maxCellTemperatureNr(self):
         return str(self.update_needed['maxCellTemperatureNr'][0])
 
     @pyqtProperty(str, notify=minCellTemperatureChanged)
-    def min_cell_temperature(self):
+    def minCellTemperature(self):
         return str(self.update_needed['minCellTemperature'][0])
 
     @pyqtProperty(str, notify=minCellTemperatureNrChanged)
-    def min_cell_number_temperature(self):
+    def minCellTemperatureNr(self):
         return str(self.update_needed['minCellTemperatureNr'][0])
+
+    @pyqtProperty(bool, notify=cellOverVoltageAlarmChanged)
+    def cellOverVoltageAlarm(self):
+        return str(self.update_needed['cellOverVoltageAlarm'][0])
+
+    @pyqtProperty(bool, notify=cellUnderVoltageAlarmChanged)
+    def cellUnderVoltageAlarm(self):
+        return str(self.update_needed['cellUnderVoltageAlarm'][0])
+
+    @pyqtProperty(bool, notify=batteryOverVoltageAlarmChanged)
+    def batteryOverVoltageAlarm(self):
+        return str(self.update_needed['batteryOverVoltageAlarm'][0])
+
+    @pyqtProperty(bool, notify=batteryUnderVoltageAlarmChanged)
+    def batteryUnderVoltageAlarm(self):
+        return str(self.update_needed['batteryUnderVoltageAlarm'][0])
+
+    @pyqtProperty(bool, notify=batteryDischargingOverCurrentAlarmChanged)
+    def batteryDischargingOverCurrentAlarm(self):
+        return str(self.update_needed['batteryDischargingOverCurrentAlarm'][0])
+
+    @pyqtProperty(bool, notify=batteryChargingOverCurrentAlarmChanged)
+    def batteryChargingOverCurrentAlarm(self):
+        return str(self.update_needed['batteryChargingOverCurrentAlarm'][0])
+
+    @pyqtProperty(bool, notify=batteryDischargingOverTemperatureAlarmChanged)
+    def batteryDischargingOverTemperatureAlarm(self):
+        return str(self.update_needed['batteryDischargingOverTemperatureAlarm'][0])
+
+    @pyqtProperty(bool, notify=batteryChargingOverTemperatureAlarmChanged)
+    def batteryChargingOverTemperatureAlarm(self):
+        return str(self.update_needed['batteryChargingOverTemperatureAlarm'][0])
+
+    @pyqtProperty(bool, notify=batteryDischargingUnderTemperatureAlarmChanged)
+    def batteryDischargingUnderTemperatureAlarm(self):
+        return str(self.update_needed['batteryDischargingUnderTemperatureAlarm'][0])
+
+    @pyqtProperty(bool, notify=batteryChargingUnderTemperatureAlarmChanged)
+    def batteryChargingUnderTemperatureAlarm(self):
+        return str(self.update_needed['batteryChargingUnderTemperatureAlarm'][0])
+
+    @pyqtProperty(bool, notify=socOverThresholdAlarmChanged)
+    def socOverThresholdAlarm(self):
+        return str(self.update_needed['socOverThresholdAlarm'][0])
+
+    @pyqtProperty(bool, notify=socUnderThresholdAlarmChanged)
+    def socUnderThresholdAlarm(self):
+        return str(self.update_needed['socUnderThresholdAlarm'][0])
+
+    @pyqtProperty(bool, notify=voltageDiffAlarmChanged)
+    def voltageDiffAlarm(self):
+        return str(self.update_needed['voltageDiffAlarm'][0])
+
+    @pyqtProperty(bool, notify=temperatureDiffAlarmChanged)
+    def temperatureDiffAlarm(self):
+        return str(self.update_needed['temperatureDiffAlarm'][0])
+
+    @pyqtProperty(bool, notify=mosTemperatureHighAlarmChanged)
+    def mosTemperatureHighAlarm(self):
+        return str(self.update_needed['mosTemperatureHighAlarm'][0])
+
+    @pyqtProperty(bool, notify=envTemperatureHighAlarmChanged)
+    def envTemperatureHighAlarm(self):
+        return str(self.update_needed['envTemperatureHighAlarm'][0])
+
+    @pyqtProperty(bool, notify=cellOverVoltageProtectChanged)
+    def cellOverVoltageProtect(self):
+        return str(self.update_needed['cellOverVoltageProtect'][0])
+
+    @pyqtProperty(bool, notify=cellUnderVoltageProtectChanged)
+    def cellUnderVoltageProtect(self):
+        return str(self.update_needed['cellUnderVoltageProtect'][0])
+
+    @pyqtProperty(bool, notify=batteryOverVoltageProtectChanged)
+    def batteryOverVoltageProtect(self):
+        return str(self.update_needed['batteryOverVoltageProtect'][0])
+
+    @pyqtProperty(bool, notify=batteryUnderVoltageProtectChanged)
+    def batteryUnderVoltageProtect(self):
+        return str(self.update_needed['batteryUnderVoltageProtect'][0])
+
+    @pyqtProperty(bool, notify=batteryDischargingOverCurrentProtectChanged)
+    def batteryDischargingOverCurrentProtect(self):
+        return str(self.update_needed['batteryDischargingOverCurrent'][0])
+
+    @pyqtProperty(bool, notify=batteryChargingOverCurrentProtectChanged)
+    def batteryChargingOverCurrentProtect(self):
+        return str(self.update_needed['batteryChargingOverCurrentProtect'][0])
+
+    @pyqtProperty(bool, notify=batteryDischargingOverTemperatureProtectChanged)
+    def batteryDischargingOverTemperatureProtect(self):
+        return str(self.update_needed['batteryDischargingOverTemperatureProtect'][0])
+
+    @pyqtProperty(bool, notify=batteryChargingOverTemperatureProtectChanged)
+    def batteryChargingOverTemperatureProtect(self):
+        return str(self.update_needed['batteryChargingOverTemperatureProtect'][0])
+
+    @pyqtProperty(bool, notify=batteryDischargingUnderTemperatureProtectChanged)
+    def batteryDischargingUnderTemperatureProtect(self):
+        return str(self.update_needed['batteryDischargingUnderTemperatureProtect'][0])
+
+    @pyqtProperty(bool, notify=batteryChargingUnderTemperatureProtectChanged)
+    def batteryChargingUnderTemperatureProtect(self):
+        return str(self.update_needed['batteryChargingUnderTemperatureProtect'][0])
+
+    @pyqtProperty(bool, notify=socOverThresholdProtectChanged)
+    def socOverThresholdProtect(self):
+        return str(self.update_needed['socOverThresholdProtect'][0])
+
+    @pyqtProperty(bool, notify=socUnderThresholdProtectChanged)
+    def socUnderThresholdProtect(self):
+        return str(self.update_needed['socUnderThresholdProtect'][0])
+
+    @pyqtProperty(bool, notify=voltageDiffProtectChanged)
+    def voltageDiffProtect(self):
+        return str(self.update_needed['voltageDiffProtect'][0])
+
+    @pyqtProperty(bool, notify=temperatureDiffProtectChanged)
+    def temperatureDiffProtect(self):
+        return str(self.update_needed['temperatureDiffProtect'][0])
+
+    @pyqtProperty(bool, notify=mosTemperatureHighProtectChanged)
+    def mosTemperatureHighProtect(self):
+        return str(self.update_needed['mosTemperatureHighProtect'][0])
+
+    @pyqtProperty(bool, notify=envTemperatureHighProtectChanged)
+    def envTemperatureHighProtect(self):
+        return str(self.update_needed['envTemperatureHighProtect'][0])
+
+    @pyqtProperty(bool, notify=dischargingMosNoFunctionChanged)
+    def dischargingMosNoFunction(self):
+        return str(self.update_needed['dischargingMosNoFunction'][0])
+
+    @pyqtProperty(bool, notify=chargingMosNoFunctionChanged)
+    def chargingMosNoFunction(self):
+        return str(self.update_needed['chargingMosNoFunction'][0])
+
+    @pyqtProperty(bool, notify=eepromWriteFailChanged)
+    def eepromWriteFail(self):
+        return str(self.update_needed['eepromWriteFail'][0])
+
+    @pyqtProperty(bool, notify=notChargingUnderVoltageChanged)
+    def notChargingUnderVoltage(self):
+        return str(self.update_needed['notChargingUnderVoltage'][0])
+
+    @pyqtProperty(bool, notify=shortProtectChanged)
+    def shortProtect(self):
+        return str(self.update_needed['shortProtect'][0])
+
+    @pyqtProperty(bool, notify=dischargingMosFetStatusChanged)
+    def dischargingMosFetStatus(self):
+        return str(self.update_needed['dischargingMosFetStatus'][0])
+
+    @pyqtProperty(bool, notify=chargingMosFetStatusChanged)
+    def chargingMosFetStatus(self):
+        return str(self.update_needed['chargingMosFetStatus'][0])
+
+    @pyqtProperty(bool, notify=preChargingMosFetStatusChanged)
+    def preChargingMosFetStatus(self):
+        return str(self.update_needed['preChargingMosFetStatus'][0])
+
+    @pyqtProperty(bool, notify=heaterSwitchChanged)
+    def heaterSwitch(self):
+        return str(self.update_needed['heaterSwitch'][0])
+
+    @pyqtProperty(bool, notify=gprsChanged)
+    def gprs(self):
+        return str(self.update_needed['gprs'][0])
+
+    @pyqtProperty(bool, notify=chargerAdapterPluginChanged)
+    def chargerAdapterPlugin(self):
+        return str(self.update_needed['chargerAdapterPlugin'][0])
+
+    @pyqtProperty(bool, notify=loaderConnectionChanged)
+    def loaderConnection(self):
+        return str(self.update_needed['loaderConnection'][0])
 
 
     @pyqtProperty(str, notify=systemStatusChanged)

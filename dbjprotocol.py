@@ -199,6 +199,107 @@ class DBJProtocol(QObject):
         battery_min_cell_number_temperature = int(data[24] | (data[25] << 8))
         self.batteryStatusChanged.emit('minCellTemperatureNr', str(battery_min_cell_number_temperature))
 
+        temp = data[26]
+        temp = temp & 0x01
+        self.batteryStatusChanged.emit('cellOverVoltageAlarm', str(temp))
+        temp = (temp >> 1) & 0x01
+        self.batteryStatusChanged.emit('cellUnderVoltageAlarm', str(temp))
+        temp = (temp >> 2) & 0x01
+        self.batteryStatusChanged.emit('batteryOverVoltageAlarm', str(temp))
+        temp = (temp >> 3) & 0x01
+        self.batteryStatusChanged.emit('batteryUnderVoltageAlarm', str(temp))
+        temp = (temp >> 4) & 0x01
+        self.batteryStatusChanged.emit('batteryDischargingOverCurrentAlarm', str(temp))
+        temp = (temp >> 5) & 0x01
+        self.batteryStatusChanged.emit('batteryChargingOverCurrentAlarm', str(temp))
+        temp = (temp >> 6) & 0x01
+        self.batteryStatusChanged.emit('batteryDischargingOverTemperatureAlarm', str(temp))
+        temp = (temp >> 7) & 0x01
+        self.batteryStatusChanged.emit('batteryChargingOverTemperatureAlarm', str(temp))
+
+        temp = data[27]
+        temp = temp & 0x01
+        self.batteryStatusChanged.emit('batteryDischargingUnderTemperatureAlarm', str(temp))
+        temp = (temp >> 1) & 0x01
+        self.batteryStatusChanged.emit('batteryChargingUnderTemperatureAlarm', str(temp))
+        temp = (temp >> 2) & 0x01
+        self.batteryStatusChanged.emit('socOverThresholdAlarm', str(temp))
+        temp = (temp >> 3) & 0x01
+        self.batteryStatusChanged.emit('socUnderThresholdAlarm', str(temp))
+        temp = (temp >> 4) & 0x01
+        self.batteryStatusChanged.emit('voltageDiffAlarm', str(temp))
+        temp = (temp >> 5) & 0x01
+        self.batteryStatusChanged.emit('temperatureDiffAlarm', str(temp))
+        temp = (temp >> 6) & 0x01
+        self.batteryStatusChanged.emit('mosTemperatureHighAlarm', str(temp))
+        temp = (temp >> 7) & 0x01
+        self.batteryStatusChanged.emit('envTemperatureHighAlarm', str(temp))
+
+        temp = data[30]
+        temp = temp & 0x01
+        self.batteryStatusChanged.emit('cellOverVoltageProtect', str(temp))
+        temp = (temp >> 1) & 0x01
+        self.batteryStatusChanged.emit('cellUnderVoltageProtect', str(temp))
+        temp = (temp >> 2) & 0x01
+        self.batteryStatusChanged.emit('batteryOverVoltageProtect', str(temp))
+        temp = (temp >> 3) & 0x01
+        self.batteryStatusChanged.emit('batteryUnderVoltageProtect', str(temp))
+        temp = (temp >> 4) & 0x01
+        self.batteryStatusChanged.emit('batteryDischargingOverCurrentProtect', str(temp))
+        temp = (temp >> 5) & 0x01
+        self.batteryStatusChanged.emit('batteryChargingOverCurrentProtect', str(temp))
+        temp = (temp >> 6) & 0x01
+        self.batteryStatusChanged.emit('batteryDischargingOverTemperatureProtect', str(temp))
+        temp = (temp >> 7) & 0x01
+        self.batteryStatusChanged.emit('batteryChargingOverTemperatureProtect', str(temp))
+
+        temp = data[31]
+        temp = temp & 0x01
+        self.batteryStatusChanged.emit('batteryDischargingUnderTemperatureProtect', str(temp))
+        temp = (temp >> 1) & 0x01
+        self.batteryStatusChanged.emit('batteryChargingUnderTemperatureProtect', str(temp))
+        temp = (temp >> 2) & 0x01
+        self.batteryStatusChanged.emit('socOverThresholdProtect', str(temp))
+        temp = (temp >> 3) & 0x01
+        self.batteryStatusChanged.emit('socUnderThresholdProtect', str(temp))
+        temp = (temp >> 4) & 0x01
+        self.batteryStatusChanged.emit('voltageDiffProtect', str(temp))
+        temp = (temp >> 5) & 0x01
+        self.batteryStatusChanged.emit('temperatureDiffProtect', str(temp))
+        temp = (temp >> 6) & 0x01
+        self.batteryStatusChanged.emit('mosTemperatureHighProtect', str(temp))
+        temp = (temp >> 7) & 0x01
+        self.batteryStatusChanged.emit('envTemperatureHighProtect', str(temp))
+
+        temp = data[34]
+        temp = temp & 0x01
+        self.batteryStatusChanged.emit('dischargingMosNoFunction', str(temp))
+        temp = (temp >> 1) & 0x01
+        self.batteryStatusChanged.emit('chargingMosNoFunction', str(temp))
+        temp = (temp >> 2) & 0x01
+        self.batteryStatusChanged.emit('eepromWriteFail', str(temp))
+        temp = (temp >> 3) & 0x01
+        self.batteryStatusChanged.emit('notChargingUnderVoltage', str(temp))
+        temp = (temp >> 4) & 0x01
+        self.batteryStatusChanged.emit('shortProtect', str(temp))
+
+        temp = data[36]
+        temp = temp & 0x01
+        self.batteryStatusChanged.emit('dischargingMosFetStatus', str(temp))
+        temp = (temp >> 1) & 0x01
+        self.batteryStatusChanged.emit('chargingMosFetStatus', str(temp))
+        temp = (temp >> 2) & 0x01
+        self.batteryStatusChanged.emit('preChargingMosFetStatus', str(temp))
+        temp = (temp >> 3) & 0x01
+        self.batteryStatusChanged.emit('heaterSwitch', str(temp))
+        temp = (temp >> 4) & 0x01
+        self.batteryStatusChanged.emit('gprs', str(temp))
+        temp = (temp >> 5) & 0x01
+        self.batteryStatusChanged.emit('chargerAdapterPlugin', str(temp))
+        temp = (temp >> 6) & 0x01
+        self.batteryStatusChanged.emit('loaderConnection', str(temp))
+
+
 
     def readBatterySettingItem(self, code, data):
         send_buffer = bytearray()
