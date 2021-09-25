@@ -180,7 +180,7 @@ Rectangle {
                             color: "blue"
                         }
                     }
-                    model: battery
+                    model: batteryThermalModel
 
                 }
 			}

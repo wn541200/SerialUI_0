@@ -153,7 +153,7 @@ class BatteryStatus(QObject):
             'thermal_sensors': [[1], self.thermal_sensorsChanged]
         }
 
-        self.batteryModel = BatteryModel(self.update_needed['thermal_sensors'][0])
+        self.batteryThermalSensorsModel = BatteryModel(self.update_needed['thermal_sensors'][0])
         self.timer = Timer(5, self.foo)
         self.timer.start()
 
@@ -401,7 +401,7 @@ class BatteryStatus(QObject):
 
     def foo(self):
         self.update(soc=90)
-        self.batteryModel.dataReceived.emit(2)
+        self.batteryThermalSensorsModel.dataReceived.emit(2)
 
     def update(self, *args, **kwargs):
         print(args)
