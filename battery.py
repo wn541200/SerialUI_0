@@ -7,79 +7,83 @@ class BatteryStatus(QObject):
     OFF = 0
     ON = 1
 
-    batteryUpdated = pyqtSignal(str)
-    cells_countChanged = pyqtSignal(str)
-    voltageChanged = pyqtSignal(str)
-    currentChanged = pyqtSignal(str)
-    socChanged = pyqtSignal(str)
-    sohChanged = pyqtSignal(str)
-    maxCellVoltageChanged = pyqtSignal(str)
-    maxCellVoltageNrChanged = pyqtSignal(str)
-    minCellVoltageChanged = pyqtSignal(str)
-    minCellVoltageNrChanged = pyqtSignal(str)
-    maxCellTemperatureChanged = pyqtSignal(str)
-    maxCellTemperatureNrChanged = pyqtSignal(str)
-    minCellTemperatureChanged = pyqtSignal(str)
-    minCellTemperatureNrChanged = pyqtSignal(str)
-    maxCellsVoltageDiffChanged = pyqtSignal(str)
+    batteryUpdated = pyqtSignal(object)
+    cells_countChanged = pyqtSignal(object)
+    voltageChanged = pyqtSignal(object)
+    currentChanged = pyqtSignal(object)
+    socChanged = pyqtSignal(object)
+    sohChanged = pyqtSignal(object)
+    maxCellVoltageChanged = pyqtSignal(object)
+    maxCellVoltageNrChanged = pyqtSignal(object)
+    minCellVoltageChanged = pyqtSignal(object)
+    minCellVoltageNrChanged = pyqtSignal(object)
+    maxCellTemperatureChanged = pyqtSignal(object)
+    maxCellTemperatureNrChanged = pyqtSignal(object)
+    minCellTemperatureChanged = pyqtSignal(object)
+    minCellTemperatureNrChanged = pyqtSignal(object)
+    maxCellsVoltageDiffChanged = pyqtSignal(object)
 
-    cellOverVoltageAlarmChanged = pyqtSignal(str)
-    cellUnderVoltageAlarmChanged = pyqtSignal(str)
-    batteryOverVoltageAlarmChanged = pyqtSignal(str)
-    batteryUnderVoltageAlarmChanged = pyqtSignal(str)
-    batteryDischargingOverCurrentAlarmChanged = pyqtSignal(str)
-    batteryChargingOverCurrentAlarmChanged = pyqtSignal(str)
-    batteryDischargingOverTemperatureAlarmChanged = pyqtSignal(str)
-    batteryChargingOverTemperatureAlarmChanged = pyqtSignal(str)
-    batteryDischargingUnderTemperatureAlarmChanged = pyqtSignal(str)
-    batteryChargingUnderTemperatureAlarmChanged = pyqtSignal(str)
-    socOverThresholdAlarmChanged = pyqtSignal(str)
-    socUnderThresholdAlarmChanged = pyqtSignal(str)
-    voltageDiffAlarmChanged = pyqtSignal(str)
-    temperatureDiffAlarmChanged = pyqtSignal(str)
-    mosTemperatureHighAlarmChanged = pyqtSignal(str)
-    envTemperatureHighAlarmChanged = pyqtSignal(str)
+    cellOverVoltageAlarmChanged = pyqtSignal(object)
+    cellUnderVoltageAlarmChanged = pyqtSignal(object)
+    batteryOverVoltageAlarmChanged = pyqtSignal(object)
+    batteryUnderVoltageAlarmChanged = pyqtSignal(object)
+    batteryDischargingOverCurrentAlarmChanged = pyqtSignal(object)
+    batteryChargingOverCurrentAlarmChanged = pyqtSignal(object)
+    batteryDischargingOverTemperatureAlarmChanged = pyqtSignal(object)
+    batteryChargingOverTemperatureAlarmChanged = pyqtSignal(object)
+    batteryDischargingUnderTemperatureAlarmChanged = pyqtSignal(object)
+    batteryChargingUnderTemperatureAlarmChanged = pyqtSignal(object)
+    socOverThresholdAlarmChanged = pyqtSignal(object)
+    socUnderThresholdAlarmChanged = pyqtSignal(object)
+    voltageDiffAlarmChanged = pyqtSignal(object)
+    temperatureDiffAlarmChanged = pyqtSignal(object)
+    mosTemperatureHighAlarmChanged = pyqtSignal(object)
+    envTemperatureHighAlarmChanged = pyqtSignal(object)
 
-    cellOverVoltageProtectChanged = pyqtSignal(str)
-    cellUnderVoltageProtectChanged = pyqtSignal(str)
-    batteryOverVoltageProtectChanged = pyqtSignal(str)
-    batteryUnderVoltageProtectChanged = pyqtSignal(str)
-    batteryDischargingOverCurrentProtectChanged = pyqtSignal(str)
-    batteryChargingOverCurrentProtectChanged = pyqtSignal(str)
-    batteryDischargingOverTemperatureProtectChanged = pyqtSignal(str)
-    batteryChargingOverTemperatureProtectChanged = pyqtSignal(str)
-    batteryDischargingUnderTemperatureProtectChanged = pyqtSignal(str)
-    batteryChargingUnderTemperatureProtectChanged = pyqtSignal(str)
-    socOverThresholdProtectChanged = pyqtSignal(str)
-    socUnderThresholdProtectChanged = pyqtSignal(str)
-    voltageDiffProtectChanged = pyqtSignal(str)
-    temperatureDiffProtectChanged = pyqtSignal(str)
-    mosTemperatureHighProtectChanged = pyqtSignal(str)
-    envTemperatureHighProtectChanged = pyqtSignal(str)
+    cellOverVoltageProtectChanged = pyqtSignal(object)
+    cellUnderVoltageProtectChanged = pyqtSignal(object)
+    batteryOverVoltageProtectChanged = pyqtSignal(object)
+    batteryUnderVoltageProtectChanged = pyqtSignal(object)
+    batteryDischargingOverCurrentProtectChanged = pyqtSignal(object)
+    batteryChargingOverCurrentProtectChanged = pyqtSignal(object)
+    batteryDischargingOverTemperatureProtectChanged = pyqtSignal(object)
+    batteryChargingOverTemperatureProtectChanged = pyqtSignal(object)
+    batteryDischargingUnderTemperatureProtectChanged = pyqtSignal(object)
+    batteryChargingUnderTemperatureProtectChanged = pyqtSignal(object)
+    socOverThresholdProtectChanged = pyqtSignal(object)
+    socUnderThresholdProtectChanged = pyqtSignal(object)
+    voltageDiffProtectChanged = pyqtSignal(object)
+    temperatureDiffProtectChanged = pyqtSignal(object)
+    mosTemperatureHighProtectChanged = pyqtSignal(object)
+    envTemperatureHighProtectChanged = pyqtSignal(object)
 
-    dischargingMosNoFunctionChanged = pyqtSignal(str)
-    chargingMosNoFunctionChanged = pyqtSignal(str)
-    eepromWriteFailChanged = pyqtSignal(str)
-    notChargingUnderVoltageChanged = pyqtSignal(str)
-    shortProtectChanged = pyqtSignal(str)
+    dischargingMosNoFunctionChanged = pyqtSignal(object)
+    chargingMosNoFunctionChanged = pyqtSignal(object)
+    eepromWriteFailChanged = pyqtSignal(object)
+    notChargingUnderVoltageChanged = pyqtSignal(object)
+    shortProtectChanged = pyqtSignal(object)
 
-    dischargingMosFetStatusChanged = pyqtSignal(str)
-    chargingMosFetStatusChanged = pyqtSignal(str)
-    preChargingMosFetStatusChanged = pyqtSignal(str)
-    heaterSwitchChanged = pyqtSignal(str)
-    gprsChanged = pyqtSignal(str)
-    chargerAdapterPluginChanged = pyqtSignal(str)
-    loaderConnectionChanged = pyqtSignal(str)
+    dischargingMosFetStatusChanged = pyqtSignal(object)
+    chargingMosFetStatusChanged = pyqtSignal(object)
+    preChargingMosFetStatusChanged = pyqtSignal(object)
+    heaterSwitchChanged = pyqtSignal(object)
+    gprsChanged = pyqtSignal(object)
+    chargerAdapterPluginChanged = pyqtSignal(object)
+    loaderConnectionChanged = pyqtSignal(object)
 
-    systemStatusChanged = pyqtSignal(str)
+    systemStatusChanged = pyqtSignal(object)
 
-    cellsChanged = pyqtSignal(str)
-    thermal_sensorsChanged = pyqtSignal(str)
+    cellsChanged = pyqtSignal(object)
+    thermal_sensorsChanged = pyqtSignal(object)
 
-    read_battery_signal = pyqtSignal(int)
+    read_battery_signal = pyqtSignal(object)
 
     def __init__(self, parent=None):
         super(QObject, self).__init__(parent)
+
+        self.batteryThermalSensorsModel = BatteryModel(datas=[])
+        self.batteryCellsBalanceModel = BatteryModel(datas=[])
+        self.batteryCellsVoltageModel = BatteryModel(datas=[])
 
         # 定义为一个字典，把几个东西绑定为一条
         # 变量名 / 值 / 信号
@@ -150,12 +154,10 @@ class BatteryStatus(QObject):
 
 
             'cells': [[], self.cellsChanged],
-            'thermal_sensors': [[1], self.thermal_sensorsChanged]
+            'thermal_sensors': [[], self.batteryThermalSensorsModel.dataReceived],
+            'cells_balance': [[], self.batteryCellsBalanceModel.dataReceived],
+            'cells_voltage': [[], self.batteryCellsVoltageModel.dataReceived]
         }
-
-        self.batteryThermalSensorsModel = BatteryModel(self.update_needed['thermal_sensors'][0])
-        self.timer = Timer(5, self.foo)
-        self.timer.start()
 
     @pyqtProperty(str, notify=cells_countChanged)
     def cells_count(self):
@@ -399,9 +401,6 @@ class BatteryStatus(QObject):
     def status(self):
         return str(self.update_needed['status'][0])
 
-    def foo(self):
-        self.update(soc=90)
-        self.batteryThermalSensorsModel.dataReceived.emit(2)
 
     def update(self, *args, **kwargs):
         print(args)
@@ -411,12 +410,12 @@ class BatteryStatus(QObject):
             if args[0] in self.update_needed:
                 item = self.update_needed[args[0]]
                 item[0] = args[1]
-                item[1].emit(str(args[1]))
+                item[1].emit(args[1])
 
         for k, v in kwargs.items():
             item = self.update_needed[k]
             item[0] = v
-            item[1].emit(str(v))
+            item[1].emit(v)
 
     @pyqtSlot(int)
     def readBattery(self, code):

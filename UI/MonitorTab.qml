@@ -78,24 +78,6 @@ Rectangle {
 			}
 		}
 		
-		/*
-		ListView {
-			anchors.fill: parent
-			orientation: ListView.Horizontal
-			spacing: 50
-			model: battery
-			
-			delegate: Rectangle {
-				width: baseInfoGroupBox.width / 6.2
-				height: 30
-				color: "#e5e5e5"
-				Text {
-					anchors.centerIn: parent
-					font.pointSize: 12
-					text: name + ": " + number
-				}
-			}
-		}*/
 	}
 	
 	GridLayout{
@@ -413,6 +395,33 @@ Rectangle {
 				    }
 				
 				}
+				
+				GridView {
+                    id: cellsView
+                    anchors.fill: parent
+                    anchors.topMargin: parent.height / 4
+                    cellWidth: 120
+                    cellHeight: 40
+
+                    delegate: Rectangle {
+                        width: cellsView.cellWidth
+                        height: cellsView.cellHeight
+                        Label {
+                            id: temp_label
+                            width: 40
+                            text: "电芯" + index
+                        }
+
+                        Label {
+                            anchors.left: temp_label.right
+                            anchors.leftMargin: 20
+                            text: number
+                            color: "blue"
+                        }
+                    }
+                    model: batteryCellsVoltageModel
+
+                }
 			}
 		}
 		

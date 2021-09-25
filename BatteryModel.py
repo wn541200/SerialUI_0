@@ -3,7 +3,7 @@ from threading import Timer
 
 
 class BatteryModel(QAbstractListModel):
-    dataReceived = pyqtSignal(int)
+    dataReceived = pyqtSignal(object)
 
     def __init__(self, datas: [], parent=None):
         super(QAbstractListModel, self).__init__(parent)
@@ -30,15 +30,15 @@ class BatteryModel(QAbstractListModel):
         """ rowCount(self, parent: QModelIndex = QModelIndex()) -> int """
         return len(self.battery_data)
 
-    @pyqtSlot( int)
+    @pyqtSlot(object)
     def update(self, data):
         # ix = self.index(0, 0)
         # self.battery_data[0] = '3.5V'
         # self.dataChanged.emit(ix, ix, self.roleNames())
-        # self.beginResetModel()
-        # self.battery_data = [1, 2, 3, 4, 5]
-        # self.endResetModel()
-        self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
-        self.battery_data.append(data)
+        self.beginResetModel()
+        self.battery_data = []
+        self.endResetModel()
+        self.beginInsertRows(QModelIndex(), 0, len(data)-1)
+        self.battery_data = data
         self.endInsertRows()
         print(self.battery_data)

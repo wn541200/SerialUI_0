@@ -12,7 +12,7 @@ Rectangle {
 
     Connections{
             target: uart
-            function onDataReceived(uartData) {
+            onDataReceived: {
                 // 若使用append每次都会新起一行，这里用insert
                 txt.insert(txt.length, uartData)
             }

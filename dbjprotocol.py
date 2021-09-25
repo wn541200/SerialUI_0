@@ -1,13 +1,15 @@
 import queue
 import threading
 import time
+from math import ceil
+
 from PyQt5.QtCore import *
 
 
 class DBJProtocol(QObject):
     START = b'\x3a\x7e'
 
-    batteryStatusChanged = pyqtSignal(str, str)
+    batteryStatusChanged = pyqtSignal(str, object)
     port_send_request_signal = pyqtSignal(bytes)
 
     def __init__(self, parent=None):
@@ -16,11 +18,11 @@ class DBJProtocol(QObject):
         self.events = queue.Queue()
         self.lock = threading.Lock()
         self.buffer = bytearray()
-        self.action = {
-            30: self.code_30_function
-        }
+
         self.function_map = {
             'battery_status': [30, self.readBatteryStatus30, None, self.readBatteryStatus30Callback, None],
+            'battery_thermal_sensors': [31, self.readBatteryStatus30, None, self.readBatteryStatus31Callback, None],
+            'battery_cells': [32, self.readBatteryStatus30, None, self.readBatteryStatus32Callback, None],
             'cell_over_voltage': [40, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
             'cell_under_voltage': [41, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
             'total_over_voltage': [42, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
@@ -132,13 +134,6 @@ class DBJProtocol(QObject):
         #     func(data)
         # else:
         #     print('功能码未实现：' + str(packet[4]))
-
-    def code_30_function(self, data):
-        #print(data)
-        if data is not None:
-            battery_total_voltage = int(data[0] | (data[1] << 8))
-            self.voltageChanged.emit('voltage', battery_total_voltage)
-            print(battery_total_voltage)
 
     def readBatteryStatus30(self, code):
         send_buffer = bytearray()
@@ -299,7 +294,43 @@ class DBJProtocol(QObject):
         temp = (temp >> 6) & 0x01
         self.batteryStatusChanged.emit('loaderConnection', str(temp))
 
+    def readBatteryStatus31Callback(self, data):
+        print(data)
+        thermals = []
+        count = int(data[0] | (data[1] << 8))
+        for i in range(count):
+            temp = int(data[2+i*2] | (data[3+i*2] << 8))
+            temp = (temp-2731)*0.1
+            temp = round(temp, 2)
+            thermals.append(temp)
+        self.batteryStatusChanged.emit('thermal_sensors', thermals)
 
+    def readBatteryStatus32Callback(self, data):
+        print(data)
+        cells_balance = []
+        cells_voltage = []
+        count = int(data[0] | (data[1] << 8))
+        bit_count = 0
+
+        for i in range(ceil(count/8)):
+            for bit in range(8):
+                cells_balance.append((data[i+2] >> bit) & 1)
+                bit_count = bit_count + 1
+
+                if bit_count >= count:
+                    break
+
+        # print(cells_balance)
+
+        for i in range(count):
+            temp = int(data[2+ceil(count/8)+i*2] | (data[3+ceil(count/8)+i*2] << 8))
+            temp = temp*0.001
+            temp = round(temp, 3)
+            cells_voltage.append(temp)
+
+        # print(cells_voltage)
+        self.batteryStatusChanged.emit('cells_balance', cells_balance)
+        self.batteryStatusChanged.emit('cells_voltage', cells_voltage)
 
     def readBatterySettingItem(self, code, data):
         send_buffer = bytearray()
