@@ -42,8 +42,14 @@ Window {
         }
 		
 		Tab {
+            title: "系统设置"
+            source: "SystemSettingTab.qml"
+			visible: false
+        }
+		
+		Tab {
             title: "参数设置"
-             source: "SettingsTab.qml"
+            source: "SettingsTab.qml"
         }
 
         Tab {

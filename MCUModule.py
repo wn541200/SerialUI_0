@@ -3,6 +3,7 @@ from uart import Uart
 from dbjprotocol import DBJProtocol
 from battery import BatteryStatus
 from BatterySettins import BatterySettings
+from SystemSettings import SystemSettings
 
 
 class MCUModule(QObject):
@@ -12,6 +13,7 @@ class MCUModule(QObject):
         self.protocol = DBJProtocol()
         self.batteryStatus = BatteryStatus()
         self.batterySettings = BatterySettings()
+        self.systemSettings = SystemSettings()
 
         # 将串口模块接收到的数据发送到协议模块解析
         self.uartModule.rawDataReceeved.connect(self.protocol.on_uart_event)
@@ -19,12 +21,13 @@ class MCUModule(QObject):
         # 发送协议模块的command到uart
         self.protocol.port_send_request_signal.connect(self.uartModule.send)
 
-        self.batteryStatus.read_battery_signal.connect(self.protocol.readBatteryStatus30)
+        self.batteryStatus.read_battery_signal.connect(self.protocol.command_read_mcu)
 
         self.batterySettings.read_battery_signal.connect(self.protocol.command_read_mcu)
         self.batterySettings.write_battery_signal.connect(self.protocol.command_write_mcu)
 
         self.protocol.batteryStatusChanged.connect(self.batteryStatus.update)
+        self.protocol.systemStatusChanged.connect(self.systemSettings.update)
         # 4e 42 01 00 1e 02 8a 0c
 
 

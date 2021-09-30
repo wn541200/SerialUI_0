@@ -10,6 +10,7 @@ class DBJProtocol(QObject):
     START = b'\x3a\x7e'
 
     batteryStatusChanged = pyqtSignal(str, object)
+    systemStatusChanged = pyqtSignal(str, object)
     port_send_request_signal = pyqtSignal(bytes)
 
     def __init__(self, parent=None):
@@ -20,9 +21,10 @@ class DBJProtocol(QObject):
         self.buffer = bytearray()
 
         self.function_map = {
-            'battery_status': [30, self.readBatteryStatus30, None, self.readBatteryStatus30Callback, None],
-            'battery_thermal_sensors': [31, self.readBatteryStatus30, None, self.readBatteryStatus31Callback, None],
-            'battery_cells': [32, self.readBatteryStatus30, None, self.readBatteryStatus32Callback, None],
+            'product_ID': [1, self.readBatterySettingItem, self.readProductIDCallback, self.writeProductID, self.writeCallback],
+            'battery_status': [30, self.readBatterySettingItem, None, self.readBatteryStatus30Callback, None],
+            'battery_thermal_sensors': [31, self.readBatterySettingItem, None, self.readBatteryStatus31Callback, None],
+            'battery_cells': [32, self.readBatterySettingItem, None, self.readBatteryStatus32Callback, None],
             'cell_over_voltage': [40, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
             'cell_under_voltage': [41, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
             'total_over_voltage': [42, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
@@ -135,7 +137,14 @@ class DBJProtocol(QObject):
         # else:
         #     print('功能码未实现：' + str(packet[4]))
 
-    def readBatteryStatus30(self, code):
+    def readProductIDCallback(self, data):
+        pass
+
+    def writeProductID(self):
+        pass
+
+
+    def readCommandNoData(self, code):
         send_buffer = bytearray()
         send_buffer.extend(self.START)
         send_buffer.extend(b'\x01')
@@ -153,8 +162,6 @@ class DBJProtocol(QObject):
         print(send_buffer)
 
     def readBatteryStatus30Callback(self, data):
-        print('xxxxx')
-        print(data)
         battery_total_voltage = int(data[0] | (data[1] << 8))
         self.batteryStatusChanged.emit('voltage', str(round(battery_total_voltage*0.01, 2)))
 

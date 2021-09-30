@@ -23,6 +23,7 @@ if __name__ == '__main__':
     mcuModule = MCUModule()
     engine.rootContext().setContextProperty("uart", mcuModule.uartModule)
     engine.rootContext().setContextProperty("batteryStatus", mcuModule.batteryStatus)
+    engine.rootContext().setContextProperty("systemSettings", mcuModule.systemSettings)
     engine.rootContext().setContextProperty("batteryThermalModel", mcuModule.batteryStatus.batteryThermalSensorsModel)
     engine.rootContext().setContextProperty("batteryCellsBalanceModel", mcuModule.batteryStatus.batteryCellsBalanceModel)
     engine.rootContext().setContextProperty("batteryCellsVoltageModel", mcuModule.batteryStatus.batteryCellsVoltageModel)
@@ -31,6 +32,5 @@ if __name__ == '__main__':
     engine.load(QUrl('UI/MainWindow.qml'))
 
     t = threading.currentThread()
-    print(t.getName())
 
     sys.exit(app.exec_())

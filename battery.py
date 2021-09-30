@@ -403,8 +403,8 @@ class BatteryStatus(QObject):
 
 
     def update(self, *args, **kwargs):
-        print(args)
-        print(kwargs)
+        # print(args)
+        # print(kwargs)
 
         if len(args):
             if args[0] in self.update_needed:
@@ -417,8 +417,8 @@ class BatteryStatus(QObject):
             item[0] = v
             item[1].emit(v)
 
-    @pyqtSlot(int)
-    def readBattery(self, code):
-        self.read_battery_signal.emit(code)
+    @pyqtSlot(str)
+    def readBattery(self, func_name):
+        self.read_battery_signal.emit(func_name)
 
 

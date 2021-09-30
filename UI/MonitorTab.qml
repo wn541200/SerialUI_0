@@ -588,7 +588,7 @@ Rectangle {
                     y: 61
                     text: qsTr("开")
                     onClicked: {
-                        batteryStatus.readBattery(30)
+                        batteryStatus.readBattery("battery_status")
                     }
                 }
 			}
