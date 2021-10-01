@@ -21,7 +21,28 @@ class DBJProtocol(QObject):
         self.buffer = bytearray()
 
         self.function_map = {
-            'product_ID': [1, self.readBatterySettingItem, self.readProductIDCallback, self.writeProductID, self.writeCallback],
+            'projectId': [1, self.readBatterySettingItem, self.writeProductID, self.readProductIDCallback,
+                          self.writeCallback],
+            'bmsId': [2, self.readBatterySettingItem, self.writeProductID, self.readBmsIdCallback,
+                      self.writeCallback],
+            'version': [3, self.readBatterySettingItem, self.writeProductID, self.readVersionCallback,
+                        self.writeCallback],
+            'protocolVersion': [4, self.readBatterySettingItem, self.writeProductID, self.readProtocolVersionCallback,
+                                self.writeCallback],
+            'bmsSN': [5, self.readBatterySettingItem, self.writeProductID, self.readBmsSNCallback,
+                                self.writeCallback],
+            'balanceInfo': [8, self.readBatterySettingItem, self.writeProductID, self.readBalanceInfoCallback,
+                      self.writeCallback],
+            'circleSetting': [9, self.readBatterySettingItem, self.writeProductID, self.readCircleSettingCallback,
+                            self.writeCallback],
+            'socSohSetting': [10, self.readBatterySettingItem, self.writeProductID, self.readSocSohSettingCallback,
+                              self.writeCallback],
+            'resistance': [11, self.readBatterySettingItem, self.writeProductID, self.readResistanceCallback,
+                              self.writeCallback],
+            'dischargingCurrentRatio': [12, self.readBatterySettingItem, self.writeProductID, self.readDischargingCurrentRatioCallback,
+                           self.writeCallback],
+            'chargingCurrentRatio': [13, self.readBatterySettingItem, self.writeProductID, self.readChargingCurrentRatioCallback,
+                                        self.writeCallback],
             'battery_status': [30, self.readBatterySettingItem, None, self.readBatteryStatus30Callback, None],
             'battery_thermal_sensors': [31, self.readBatterySettingItem, None, self.readBatteryStatus31Callback, None],
             'battery_cells': [32, self.readBatterySettingItem, None, self.readBatteryStatus32Callback, None],
@@ -138,11 +159,77 @@ class DBJProtocol(QObject):
         #     print('功能码未实现：' + str(packet[4]))
 
     def readProductIDCallback(self, data):
+        product_id = data.decode('utf-8')
+        self.systemStatusChanged.emit('projectId', product_id)
+
+    def writeProductID(self, data):
         pass
 
-    def writeProductID(self):
-        pass
+    def readBmsIdCallback(self, data):
+        bms_id = data.decode('utf-8')
+        self.systemStatusChanged.emit('bmsId', bms_id)
 
+    def readVersionCallback(self, data):
+        swVersion = int(data[0] | (data[1] << 8))
+        self.systemStatusChanged.emit('swVersion', str(round(swVersion * 0.01, 2)))
+        hwVersion = int(data[2] | (data[3] << 8))
+        self.systemStatusChanged.emit('hwVersion', str(round(hwVersion * 0.01, 2)))
+
+    def readProtocolVersionCallback(self, data):
+        protocolVersion = int(data[0] | (data[1] << 8))
+        self.systemStatusChanged.emit('protocolVersion', str(protocolVersion))
+
+    def readBmsSNCallback(self, data):
+        bmsSN = data.decode('utf-8')
+        self.systemStatusChanged.emit('bmsSN', bmsSN)
+
+    def readBalanceInfoCallback(self, data):
+        balanceEnableFlag = int(data[0] | (data[1] << 8))
+        self.systemStatusChanged.emit('balanceEnableFlag', balanceEnableFlag)
+
+        balanceEnableVoltageDiff = int(data[2] | (data[3] << 8))
+        self.systemStatusChanged.emit('balanceEnableVoltageDiff', balanceEnableVoltageDiff)
+
+        balanceEnableVoltage = int(data[4] | (data[5] << 8))
+        self.systemStatusChanged.emit('balanceEnableVoltage', balanceEnableVoltage)
+
+        balanceDisableVoltage = int(data[6] | (data[7] << 8))
+        self.systemStatusChanged.emit('balanceDisableVoltage', balanceDisableVoltage)
+
+    def readCircleSettingCallback(self, data):
+        chargingCircleSetting = int(data[0] | (data[1] << 8))
+        self.systemStatusChanged.emit('chargingCircleSetting', chargingCircleSetting)
+
+        totalChargingCirCle = int(data[2] | (data[3] << 8))
+        self.systemStatusChanged.emit('totalChargingCirCle', totalChargingCirCle)
+
+        realCapacity = int(data[4] | (data[5] << 8))
+        self.systemStatusChanged.emit('realCapacity', realCapacity)
+
+        settingCapacity = int(data[6] | (data[7] << 8))
+        self.systemStatusChanged.emit('settingCapacity', settingCapacity)
+
+    def readSocSohSettingCallback(self, data):
+        soh = int(data[0] | (data[1] << 8))
+        self.systemStatusChanged.emit('soh', soh)
+
+        soc = int(data[2] | (data[3] << 8))
+        self.systemStatusChanged.emit('soc', soc)
+
+    def readResistanceCallback(self, data):
+        sampleResistanceValue = int(data[0] | (data[1] << 8))
+        self.systemStatusChanged.emit('sampleResistanceValue', sampleResistanceValue)
+
+        zeroCurrentADCValue = int(data[2] | (data[3] << 8))
+        self.systemStatusChanged.emit('zeroCurrentADCValue', zeroCurrentADCValue)
+
+    def readDischargingCurrentRatioCallback(self, data):
+        dischargingCurrentRatio = int(data[0] | (data[1] << 8))
+        self.systemStatusChanged.emit('dischargingCurrentRatio', dischargingCurrentRatio)
+
+    def readChargingCurrentRatioCallback(self, data):
+        chargingCurrentRatio = int(data[0] | (data[1] << 8))
+        self.systemStatusChanged.emit('dischargingCurrentRatio', chargingCurrentRatio)
 
     def readCommandNoData(self, code):
         send_buffer = bytearray()
