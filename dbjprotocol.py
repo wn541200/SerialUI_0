@@ -426,6 +426,13 @@ class DBJProtocol(QObject):
         self.batteryStatusChanged.emit('cells_balance', cells_balance)
         self.batteryStatusChanged.emit('cells_voltage', cells_voltage)
 
+    def getCrc(self, data):
+        crc = 0
+        for c in data:
+            crc = crc + int(c)
+        crc = crc % 0xff
+        return crc.to_bytes(length=1, byteorder='little')
+
     def readBatterySettingItem(self, code, data):
         send_buffer = bytearray()
         send_buffer.extend(self.START)
@@ -433,6 +440,8 @@ class DBJProtocol(QObject):
         send_buffer.extend(b'\x01')
         send_buffer.extend(code)
         send_buffer.extend(b'\x00')
+        crc = self.getCrc(send_buffer)
+        send_buffer.extend(crc)
 
         self.command(bytes(send_buffer))
 
@@ -451,6 +460,8 @@ class DBJProtocol(QObject):
         send_buffer.extend(int(data.alarm_threshold_delay).to_bytes(length=2, byteorder='little'))
         send_buffer.extend(int(data.enabled).to_bytes(length=2, byteorder='little'))
 
+        crc = self.getCrc(send_buffer)
+        send_buffer.extend(crc)
         self.command(bytes(send_buffer))
 
     def readCallback(self, data):

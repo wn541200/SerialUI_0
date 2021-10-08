@@ -8,7 +8,7 @@ Rectangle {
     color: "#e5e5e5"
 	anchors.topMargin: 10
 	
-	TextArea {
+	Rectangle {
 		id: textArea
 		anchors.top: parent.top
 		anchors.left: parent.left
@@ -17,8 +17,40 @@ Rectangle {
 		anchors.leftMargin: 20
 		anchors.rightMargin: 20
 		height: parent.height - 120
+		width: parent.width
 		
-		readOnly: true
+		color: "white"
+		
+		TableView {
+			anchors.fill: parent
+			TableViewColumn {
+				role: "time"
+				title: "时间"
+				width: 100
+			}
+			TableViewColumn {
+				role: "voltage"
+				title: "电压"
+				width: 100
+			}
+			TableViewColumn {
+				role: "current"
+				title: "电流"
+				width: 100
+			}
+			TableViewColumn {
+				role: "soc"
+				title: "soc"
+				width: 100
+			}
+			TableViewColumn {
+				role: "soh"
+				title: "soh"
+				width: 100
+			}
+			model: batteryRecordModel
+		}
+		
 	}
 	
 	Button {
@@ -40,6 +72,10 @@ Rectangle {
 		anchors.leftMargin: 20
 		width: root.width / 4
 		text: "清空"
+		
+		onClicked: {
+			batteryStatus.clearAllBatteryRecord()
+		}
 	}
 	
 	Button {

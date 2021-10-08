@@ -1,6 +1,7 @@
 from PyQt5.QtCore import *
 from threading import Timer
 from BatteryModel import BatteryModel
+from BatteryRecordModel import BatteryRecordModel
 
 
 class BatteryStatus(QObject):
@@ -84,6 +85,7 @@ class BatteryStatus(QObject):
         self.batteryThermalSensorsModel = BatteryModel(datas=[])
         self.batteryCellsBalanceModel = BatteryModel(datas=[])
         self.batteryCellsVoltageModel = BatteryModel(datas=[])
+        self.batteryRecordModel = BatteryRecordModel()
 
         # 定义为一个字典，把几个东西绑定为一条
         # 变量名 / 值 / 信号
@@ -420,5 +422,19 @@ class BatteryStatus(QObject):
     @pyqtSlot(str)
     def readBattery(self, func_name):
         self.read_battery_signal.emit(func_name)
+
+    @pyqtSlot()
+    def recordOneBatteryItem(self):
+        data = [0,
+                self.update_needed['voltage'][0],
+                self.update_needed['current'][0],
+                self.update_needed['soc'][0],
+                self.update_needed['soh'][0]
+                ]
+        self.batteryRecordModel.update(data)
+
+    @pyqtSlot()
+    def clearAllBatteryRecord(self):
+        self.batteryRecordModel.clear()
 
 

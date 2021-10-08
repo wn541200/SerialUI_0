@@ -154,6 +154,7 @@ class Uart(QObject):
             self.dataReceived.emit(str(data, encoding='utf-8', errors='ignore'))
 
     def send(self, data:bytes):
+        # print(data)
         if self.transport:
             self.transport.write(data)
 

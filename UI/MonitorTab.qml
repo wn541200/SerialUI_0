@@ -9,6 +9,17 @@ Rectangle {
     color: "#e5e5e5"
 	anchors.topMargin: 10
 	
+	Timer {
+        interval: 1000
+		running: true
+		// repeat: true
+        onTriggered: {
+			batteryStatus.readBattery("battery_status")
+			batteryStatus.readBattery("battery_thermal_sensors")
+			batteryStatus.readBattery("battery_cells")
+        }
+    }
+	
 	GroupBox {
 		id: baseInfoGroupBox
 		anchors.top: parent.top

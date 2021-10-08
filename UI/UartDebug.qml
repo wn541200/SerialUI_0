@@ -191,5 +191,26 @@ Rectangle {
                 id_input.validator = regHexInputLimit
             }
         }
+		
+		CheckBox {
+            text: qsTr("定时发送")
+			onCheckedChanged: {
+				if (checkState == Qt.Unchecked) {
+					sendTimer.running = false
+				}
+				else {
+					sendTimer.running = true
+				}
+			}
+        }
+		
+		Timer {
+        id: sendTimer
+        interval: 1000; running: false; repeat: true
+        onTriggered: {
+			uart.set_text(id_input.displayText)
+			batteryStatus.recordOneBatteryItem()
+        }
+    }
     }
 }

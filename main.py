@@ -27,6 +27,8 @@ if __name__ == '__main__':
     engine.rootContext().setContextProperty("batteryThermalModel", mcuModule.batteryStatus.batteryThermalSensorsModel)
     engine.rootContext().setContextProperty("batteryCellsBalanceModel", mcuModule.batteryStatus.batteryCellsBalanceModel)
     engine.rootContext().setContextProperty("batteryCellsVoltageModel", mcuModule.batteryStatus.batteryCellsVoltageModel)
+    engine.rootContext().setContextProperty("batteryRecordModel",
+                                            mcuModule.batteryStatus.batteryRecordModel)
     engine.rootContext().setContextProperty("batterySettingsModel", mcuModule.batterySettings)
 
     engine.load(QUrl('UI/MainWindow.qml'))

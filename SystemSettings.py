@@ -156,3 +156,11 @@ class SystemSettings(QObject):
             item = self.update_needed[k]
             item[0] = v
             item[1].emit(v)
+
+    @pyqtSlot(str)
+    def readSystemSetting(self, func_name:str):
+        self.read_system_setting_signal.emit(func_name)
+
+    @pyqtSlot(str, object)
+    def writeSystemSetting(self, func_name:str, data):
+        self.write_system_setting_signal.emit(func_name, data)
