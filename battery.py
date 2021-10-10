@@ -372,31 +372,31 @@ class BatteryStatus(QObject):
 
     @pyqtProperty(bool, notify=dischargingMosFetStatusChanged)
     def dischargingMosFetStatus(self):
-        return str(self.update_needed['dischargingMosFetStatus'][0])
+        return self.update_needed['dischargingMosFetStatus'][0] == '1'
 
     @pyqtProperty(bool, notify=chargingMosFetStatusChanged)
     def chargingMosFetStatus(self):
-        return str(self.update_needed['chargingMosFetStatus'][0])
+        return self.update_needed['chargingMosFetStatus'][0] == '1'
 
     @pyqtProperty(bool, notify=preChargingMosFetStatusChanged)
     def preChargingMosFetStatus(self):
-        return str(self.update_needed['preChargingMosFetStatus'][0])
+        return self.update_needed['preChargingMosFetStatus'][0] == '1'
 
     @pyqtProperty(bool, notify=heaterSwitchChanged)
     def heaterSwitch(self):
-        return str(self.update_needed['heaterSwitch'][0])
+        return self.update_needed['heaterSwitch'][0] == '1'
 
     @pyqtProperty(bool, notify=gprsChanged)
     def gprs(self):
-        return str(self.update_needed['gprs'][0])
+        return self.update_needed['gprs'][0] == '1'
 
     @pyqtProperty(bool, notify=chargerAdapterPluginChanged)
     def chargerAdapterPlugin(self):
-        return str(self.update_needed['chargerAdapterPlugin'][0])
+        return self.update_needed['chargerAdapterPlugin'][0] == '1'
 
     @pyqtProperty(bool, notify=loaderConnectionChanged)
     def loaderConnection(self):
-        return str(self.update_needed['loaderConnection'][0])
+        return self.update_needed['loaderConnection'][0] == '1'
 
 
     @pyqtProperty(str, notify=systemStatusChanged)
@@ -429,7 +429,16 @@ class BatteryStatus(QObject):
                 self.update_needed['voltage'][0],
                 self.update_needed['current'][0],
                 self.update_needed['soc'][0],
-                self.update_needed['soh'][0]
+                self.update_needed['soh'][0],
+                self.update_needed['maxCellVoltage'][0],
+                self.update_needed['maxCellVoltageNr'][0],
+                self.update_needed['minCellVoltage'][0],
+                self.update_needed['minCellVoltageNr'][0],
+                self.update_needed['maxCellsVoltageDiff'][0],
+                self.update_needed['maxCellTemperature'][0],
+                self.update_needed['maxCellTemperatureNr'][0],
+                self.update_needed['minCellTemperature'][0],
+                self.update_needed['minCellTemperatureNr'][0]
                 ]
         self.batteryRecordModel.update(data)
 

@@ -7,6 +7,14 @@ Rectangle {
     anchors.fill: parent
     color: "#e5e5e5"
 	anchors.topMargin: 10
+
+	Timer {
+        id: sendTimer
+        interval: 1000; running: false; repeat: true
+        onTriggered: {
+			batteryStatus.recordOneBatteryItem()
+        }
+    }
 	
 	Rectangle {
 		id: textArea
@@ -30,12 +38,12 @@ Rectangle {
 			}
 			TableViewColumn {
 				role: "voltage"
-				title: "电压"
+				title: "总电压"
 				width: 100
 			}
 			TableViewColumn {
 				role: "current"
-				title: "电流"
+				title: "总电流"
 				width: 100
 			}
 			TableViewColumn {
@@ -46,6 +54,51 @@ Rectangle {
 			TableViewColumn {
 				role: "soh"
 				title: "soh"
+				width: 100
+			}
+			TableViewColumn {
+				role: "maxCellVoltage"
+				title: "最高电压"
+				width: 100
+			}
+			TableViewColumn {
+				role: "maxCellVoltageNr"
+				title: "最高电压序号"
+				width: 100
+			}
+			TableViewColumn {
+				role: "minCellVoltage"
+				title: "最低电压"
+				width: 100
+			}
+			TableViewColumn {
+				role: "minCellVoltageNr"
+				title: "最低电压序号"
+				width: 100
+			}
+			TableViewColumn {
+				role: "maxCellsVoltageDiff"
+				title: "最大压差"
+				width: 100
+			}
+			TableViewColumn {
+				role: "maxCellTemperature"
+				title: "最高温度"
+				width: 100
+			}
+			TableViewColumn {
+				role: "maxCellTemperatureNr"
+				title: "最高温度序号"
+				width: 100
+			}
+			TableViewColumn {
+				role: "minCellTemperature"
+				title: "最低温度"
+				width: 100
+			}
+			TableViewColumn {
+				role: "minCellTemperatureNr"
+				title: "最低温度序号"
 				width: 100
 			}
 			model: batteryRecordModel
@@ -61,7 +114,9 @@ Rectangle {
 		anchors.leftMargin: 20
 		width: root.width / 4
 		text: "显示"
-		
+		onClicked: {
+		    sendTimer.running = true
+		}
 	}
 	
 	Button {

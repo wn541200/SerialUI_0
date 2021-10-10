@@ -13,7 +13,7 @@ Rectangle {
     GridView {
         id: gridView
         width: parent.width
-        height: parent.height - 40
+        height: parent.height - 80
         anchors.leftMargin: 15
         anchors.rightMargin: 15
         cellWidth: root.width / 4.5

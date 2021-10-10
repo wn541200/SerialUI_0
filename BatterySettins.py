@@ -142,6 +142,20 @@ class BatterySettings(QAbstractListModel):
         self.dataChanged.emit(ix, ix, self.roleNames())
         self.write_battery_signal.emit(item_name, self.settings[item_name])
 
+    @pyqtSlot(str, bool, int, int, int, int, int, int)
+    def updateItem(self, item_name, enabled, protect_threshold, protect_hysteresis, protect_threshold_delay,
+                protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay):
+        ix = self.index(0, 0)
+        item = self.settings[item_name]
+        item.enabled = enabled
+        item.protect_threshold = protect_threshold
+        item.protect_hysteresis = protect_hysteresis
+        item.protect_threshold_delay = protect_threshold_delay
+        item.protect_hysteresis_delay = protect_hysteresis_delay
+        item.alarm_threshold = alarm_threshold
+        item.alarm_threshold_delay = alarm_threshold_delay
+        self.dataChanged.emit(ix, ix, self.roleNames())
+
     @pyqtSlot(int)
     def readItemFromMCU(self, row):
         item_name = self.index_map[row]

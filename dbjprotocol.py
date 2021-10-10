@@ -10,6 +10,7 @@ class DBJProtocol(QObject):
     START = b'\x3a\x7e'
 
     batteryStatusChanged = pyqtSignal(str, object)
+    batterySettingsChanged = pyqtSignal(str, bool, int, int, int, int, int, int)
     systemStatusChanged = pyqtSignal(str, object)
     port_send_request_signal = pyqtSignal(bytes)
 
@@ -46,7 +47,7 @@ class DBJProtocol(QObject):
             'battery_status': [30, self.readBatterySettingItem, None, self.readBatteryStatus30Callback, None],
             'battery_thermal_sensors': [31, self.readBatterySettingItem, None, self.readBatteryStatus31Callback, None],
             'battery_cells': [32, self.readBatterySettingItem, None, self.readBatteryStatus32Callback, None],
-            'cell_over_voltage': [40, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
+            'cell_over_voltage': [40, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback40, self.writeCallback],
             'cell_under_voltage': [41, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
             'total_over_voltage': [42, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
             'total_under_voltage': [43, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
@@ -116,16 +117,27 @@ class DBJProtocol(QObject):
                 if len(self.buffer) < int(data_len)+7:
                     return
                 packet = self.buffer[start:start+5+data_len+1]
-                print()
+                crc = self.buffer[start+5+data_len+1]
                 del self.buffer[:start+5+data_len+1]
-                self.parse_received_packet(packet)
+                if self.validate_crc(packet[:], crc):
+                    self.parse_received_packet(packet)
                 self.responses.put(b'OK')
             except Exception as e:
-                print(e)
+                # print(e)
+                pass
+
+    def validate_crc(self, data, read_crc):
+        crc = 0
+        for c in data:
+            crc = crc + int(c)
+
+        crc = crc % 256
+
+        return crc == read_crc
 
     def parse_received_packet(self, packet):
-        #print(packet)
-        print('function code:' + str(packet[4]))
+        # print(packet)
+        # print('function code:' + str(packet[4]))
 
         # 获取读写标记
         op = int(packet[3])
@@ -160,6 +172,7 @@ class DBJProtocol(QObject):
 
     def readProductIDCallback(self, data):
         product_id = data.decode('utf-8')
+        print(product_id)
         self.systemStatusChanged.emit('projectId', product_id)
 
     def writeProductID(self, data):
@@ -242,11 +255,11 @@ class DBJProtocol(QObject):
         for c in send_buffer:
             crc = crc + int(c)
 
-        crc = crc % 0xff
+        crc = crc % 256
         send_buffer.extend(crc.to_bytes(length=1, byteorder='little'))
 
         self.command(bytes(send_buffer))
-        print(send_buffer)
+        # print(send_buffer)
 
     def readBatteryStatus30Callback(self, data):
         battery_total_voltage = int(data[0] | (data[1] << 8))
@@ -288,108 +301,108 @@ class DBJProtocol(QObject):
         battery_min_cell_number_temperature = int(data[24] | (data[25] << 8))
         self.batteryStatusChanged.emit('minCellTemperatureNr', str(battery_min_cell_number_temperature))
 
-        temp = data[26]
-        temp = temp & 0x01
+        tmp = data[26]
+        temp = tmp & 0x01
         self.batteryStatusChanged.emit('cellOverVoltageAlarm', str(temp))
-        temp = (temp >> 1) & 0x01
+        temp = (tmp >> 1) & 0x01
         self.batteryStatusChanged.emit('cellUnderVoltageAlarm', str(temp))
-        temp = (temp >> 2) & 0x01
+        temp = (tmp >> 2) & 0x01
         self.batteryStatusChanged.emit('batteryOverVoltageAlarm', str(temp))
-        temp = (temp >> 3) & 0x01
+        temp = (tmp >> 3) & 0x01
         self.batteryStatusChanged.emit('batteryUnderVoltageAlarm', str(temp))
-        temp = (temp >> 4) & 0x01
+        temp = (tmp >> 4) & 0x01
         self.batteryStatusChanged.emit('batteryDischargingOverCurrentAlarm', str(temp))
-        temp = (temp >> 5) & 0x01
+        temp = (tmp >> 5) & 0x01
         self.batteryStatusChanged.emit('batteryChargingOverCurrentAlarm', str(temp))
-        temp = (temp >> 6) & 0x01
+        temp = (tmp >> 6) & 0x01
         self.batteryStatusChanged.emit('batteryDischargingOverTemperatureAlarm', str(temp))
-        temp = (temp >> 7) & 0x01
+        temp = (tmp >> 7) & 0x01
         self.batteryStatusChanged.emit('batteryChargingOverTemperatureAlarm', str(temp))
 
-        temp = data[27]
-        temp = temp & 0x01
+        tmp = data[27]
+        temp = tmp & 0x01
         self.batteryStatusChanged.emit('batteryDischargingUnderTemperatureAlarm', str(temp))
-        temp = (temp >> 1) & 0x01
+        temp = (tmp >> 1) & 0x01
         self.batteryStatusChanged.emit('batteryChargingUnderTemperatureAlarm', str(temp))
-        temp = (temp >> 2) & 0x01
+        temp = (tmp >> 2) & 0x01
         self.batteryStatusChanged.emit('socOverThresholdAlarm', str(temp))
-        temp = (temp >> 3) & 0x01
+        temp = (tmp >> 3) & 0x01
         self.batteryStatusChanged.emit('socUnderThresholdAlarm', str(temp))
-        temp = (temp >> 4) & 0x01
+        temp = (tmp >> 4) & 0x01
         self.batteryStatusChanged.emit('voltageDiffAlarm', str(temp))
-        temp = (temp >> 5) & 0x01
+        temp = (tmp >> 5) & 0x01
         self.batteryStatusChanged.emit('temperatureDiffAlarm', str(temp))
-        temp = (temp >> 6) & 0x01
+        temp = (tmp >> 6) & 0x01
         self.batteryStatusChanged.emit('mosTemperatureHighAlarm', str(temp))
-        temp = (temp >> 7) & 0x01
+        temp = (tmp >> 7) & 0x01
         self.batteryStatusChanged.emit('envTemperatureHighAlarm', str(temp))
 
-        temp = data[30]
-        temp = temp & 0x01
+        tmp = data[30]
+        temp = tmp & 0x01
         self.batteryStatusChanged.emit('cellOverVoltageProtect', str(temp))
-        temp = (temp >> 1) & 0x01
+        temp = (tmp >> 1) & 0x01
         self.batteryStatusChanged.emit('cellUnderVoltageProtect', str(temp))
-        temp = (temp >> 2) & 0x01
+        temp = (tmp >> 2) & 0x01
         self.batteryStatusChanged.emit('batteryOverVoltageProtect', str(temp))
-        temp = (temp >> 3) & 0x01
+        temp = (tmp >> 3) & 0x01
         self.batteryStatusChanged.emit('batteryUnderVoltageProtect', str(temp))
-        temp = (temp >> 4) & 0x01
+        temp = (tmp >> 4) & 0x01
         self.batteryStatusChanged.emit('batteryDischargingOverCurrentProtect', str(temp))
-        temp = (temp >> 5) & 0x01
+        temp = (tmp >> 5) & 0x01
         self.batteryStatusChanged.emit('batteryChargingOverCurrentProtect', str(temp))
-        temp = (temp >> 6) & 0x01
+        temp = (tmp >> 6) & 0x01
         self.batteryStatusChanged.emit('batteryDischargingOverTemperatureProtect', str(temp))
-        temp = (temp >> 7) & 0x01
+        temp = (tmp >> 7) & 0x01
         self.batteryStatusChanged.emit('batteryChargingOverTemperatureProtect', str(temp))
 
-        temp = data[31]
-        temp = temp & 0x01
+        tmp = data[31]
+        temp = tmp & 0x01
         self.batteryStatusChanged.emit('batteryDischargingUnderTemperatureProtect', str(temp))
-        temp = (temp >> 1) & 0x01
+        temp = (tmp >> 1) & 0x01
         self.batteryStatusChanged.emit('batteryChargingUnderTemperatureProtect', str(temp))
-        temp = (temp >> 2) & 0x01
+        temp = (tmp >> 2) & 0x01
         self.batteryStatusChanged.emit('socOverThresholdProtect', str(temp))
-        temp = (temp >> 3) & 0x01
+        temp = (tmp >> 3) & 0x01
         self.batteryStatusChanged.emit('socUnderThresholdProtect', str(temp))
-        temp = (temp >> 4) & 0x01
+        temp = (tmp >> 4) & 0x01
         self.batteryStatusChanged.emit('voltageDiffProtect', str(temp))
-        temp = (temp >> 5) & 0x01
+        temp = (tmp >> 5) & 0x01
         self.batteryStatusChanged.emit('temperatureDiffProtect', str(temp))
-        temp = (temp >> 6) & 0x01
+        temp = (tmp >> 6) & 0x01
         self.batteryStatusChanged.emit('mosTemperatureHighProtect', str(temp))
-        temp = (temp >> 7) & 0x01
+        temp = (tmp >> 7) & 0x01
         self.batteryStatusChanged.emit('envTemperatureHighProtect', str(temp))
 
-        temp = data[34]
-        temp = temp & 0x01
+        tmp = data[34]
+        temp = tmp & 0x01
         self.batteryStatusChanged.emit('dischargingMosNoFunction', str(temp))
-        temp = (temp >> 1) & 0x01
+        temp = (tmp >> 1) & 0x01
         self.batteryStatusChanged.emit('chargingMosNoFunction', str(temp))
-        temp = (temp >> 2) & 0x01
+        temp = (tmp >> 2) & 0x01
         self.batteryStatusChanged.emit('eepromWriteFail', str(temp))
-        temp = (temp >> 3) & 0x01
+        temp = (tmp >> 3) & 0x01
         self.batteryStatusChanged.emit('notChargingUnderVoltage', str(temp))
-        temp = (temp >> 4) & 0x01
+        temp = (tmp >> 4) & 0x01
         self.batteryStatusChanged.emit('shortProtect', str(temp))
 
-        temp = data[36]
-        temp = temp & 0x01
+        tmp = data[36]
+        temp = tmp & 0x01
         self.batteryStatusChanged.emit('dischargingMosFetStatus', str(temp))
-        temp = (temp >> 1) & 0x01
+        temp = (tmp >> 1) & 0x01
         self.batteryStatusChanged.emit('chargingMosFetStatus', str(temp))
-        temp = (temp >> 2) & 0x01
+        temp = (tmp >> 2) & 0x01
         self.batteryStatusChanged.emit('preChargingMosFetStatus', str(temp))
-        temp = (temp >> 3) & 0x01
+        temp = (tmp >> 3) & 0x01
         self.batteryStatusChanged.emit('heaterSwitch', str(temp))
-        temp = (temp >> 4) & 0x01
+        temp = (tmp >> 4) & 0x01
         self.batteryStatusChanged.emit('gprs', str(temp))
-        temp = (temp >> 5) & 0x01
+        temp = (tmp >> 5) & 0x01
         self.batteryStatusChanged.emit('chargerAdapterPlugin', str(temp))
-        temp = (temp >> 6) & 0x01
+        temp = (tmp >> 6) & 0x01
         self.batteryStatusChanged.emit('loaderConnection', str(temp))
 
     def readBatteryStatus31Callback(self, data):
-        print(data)
+        # print(data)
         thermals = []
         count = int(data[0] | (data[1] << 8))
         for i in range(count):
@@ -400,7 +413,7 @@ class DBJProtocol(QObject):
         self.batteryStatusChanged.emit('thermal_sensors', thermals)
 
     def readBatteryStatus32Callback(self, data):
-        print(data)
+        # print(data)
         cells_balance = []
         cells_voltage = []
         count = int(data[0] | (data[1] << 8))
@@ -454,9 +467,9 @@ class DBJProtocol(QObject):
         send_buffer.extend(b'\x0d')
         send_buffer.extend(int(data.protect_threshold).to_bytes(length=2, byteorder='little'))
         send_buffer.extend(int(data.protect_hysteresis).to_bytes(length=2, byteorder='little'))
+        send_buffer.extend(int(data.alarm_threshold).to_bytes(length=2, byteorder='little'))
         send_buffer.extend(int(data.protect_threshold_delay).to_bytes(length=2, byteorder='little'))
         send_buffer.extend(int(data.protect_hysteresis_delay).to_bytes(length=2, byteorder='little'))
-        send_buffer.extend(int(data.alarm_threshold).to_bytes(length=2, byteorder='little'))
         send_buffer.extend(int(data.alarm_threshold_delay).to_bytes(length=2, byteorder='little'))
         send_buffer.extend(int(data.enabled).to_bytes(length=2, byteorder='little'))
 
@@ -464,8 +477,29 @@ class DBJProtocol(QObject):
         send_buffer.extend(crc)
         self.command(bytes(send_buffer))
 
+    def readCallback40(self, data):
+        print(data)
+        protect_threshold = int(data[0] | (data[1] << 8))
+        protect_hysteresis = int(data[2] | (data[3] << 8))
+        alarm_threshold = int(data[4] | (data[5] << 8))
+        protect_threshold_delay = int(data[6] | (data[7] << 8))
+        protect_hysteresis_delay = int(data[8] | (data[9] << 8))
+        alarm_threshold_delay = int(data[10] | (data[11] << 8))
+        enabled = int(data[12] | (data[13] << 8))
+        print(protect_threshold)
+        print(protect_hysteresis)
+        print(protect_threshold_delay)
+        print(protect_hysteresis_delay)
+        print(alarm_threshold)
+        print(alarm_threshold_delay)
+        print(enabled)
+        self.batterySettingsChanged.emit('cell_over_voltage', enabled==1, protect_threshold, protect_hysteresis, protect_threshold_delay,
+                protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay)
+        # self.batteryStatusChanged.emit('voltage', str(round(battery_total_voltage * 0.01, 2)))
+
     def readCallback(self, data):
         print('readCallback')
+        print(data)
 
     def writeCallback(self, data):
         print('writeCallback')

@@ -8,18 +8,43 @@ Rectangle {
     anchors.fill: parent
     color: "#e5e5e5"
 	anchors.topMargin: 10
+
 	
-	Timer {
-        interval: 1000
-		running: true
-		// repeat: true
-        onTriggered: {
-			batteryStatus.readBattery("battery_status")
-			batteryStatus.readBattery("battery_thermal_sensors")
-			batteryStatus.readBattery("battery_cells")
+	Connections{
+        target: uart
+        onConnectedChanged: {
+            if (connected)
+                readTimer.running = true
+            else
+                readTimer.running = false
+				
         }
+		
+		Component.onCompleted: {
+			if (uart.connected)
+				readTimer.running = true
+		}
     }
 	
+	Timer {
+	    id: readTimer
+        interval: 1000
+		running: false
+		repeat: true
+        onTriggered: {
+			if (systemSettings.projectId == '') {
+				systemSettings.readSystemSetting("projectId")
+				systemSettings.readSystemSetting("bmsSN")
+				systemSettings.readSystemSetting("version")
+			}
+			else {
+				batteryStatus.readBattery("battery_status")
+				batteryStatus.readBattery("battery_thermal_sensors")
+				batteryStatus.readBattery("battery_cells")
+			}
+        }
+    }
+
 	GroupBox {
 		id: baseInfoGroupBox
 		anchors.top: parent.top
@@ -98,7 +123,7 @@ Rectangle {
 		anchors.top: baseInfoGroupBox.bottom
 		anchors.left: baseInfoGroupBox.left
 		anchors.right: baseInfoGroupBox.right
-		anchors.bottom: root.bottom
+		height: root.height - 120
 		anchors.topMargin: 10
 		rows: 5
 		columns: 6
@@ -202,7 +227,7 @@ Rectangle {
 						Rectangle {
 							width:20
 							height:10
-							color: "green"
+							color: batteryStatus.dischargingMosFetStatus ? "green" : "gray"
 						}
 						Label {
 							width:50
@@ -213,7 +238,7 @@ Rectangle {
 						Rectangle {
 							width:20
 							height:10
-							color: "green"
+							color: batteryStatus.chargingMosFetStatus ? "green" : "gray"
 						}
 						Label {
 							width:50
@@ -224,7 +249,7 @@ Rectangle {
 						Rectangle {
 							width:20
 							height:10
-							color: "green"
+							color: batteryStatus.preChargingMosFetStatus ? "green" : "gray"
 						}
 						Label {
 							width:50
@@ -235,7 +260,7 @@ Rectangle {
 						Rectangle {
 							width:20
 							height:10
-							color: "green"
+							color: batteryStatus.heaterSwitch ? "green" : "gray"
 						}
 						Label {
 							width:50
@@ -250,7 +275,7 @@ Rectangle {
 						Rectangle {
 							width:20
 							height:10
-							color: "green"
+							color: batteryStatus.gprs ? "green" : "gray"
 						}
 						Label {
 							width:50
@@ -261,7 +286,7 @@ Rectangle {
 						Rectangle {
 							width:20
 							height:10
-							color: "green"
+							color: batteryStatus.chargerAdapterPlugin ? "green" : "gray"
 						}
 						Label {
 							width:50
@@ -272,7 +297,7 @@ Rectangle {
 						Rectangle {
 							width:20
 							height:10
-							color: "green"
+							color: batteryStatus.loaderConnection ? "green" : "gray"
 						}
 						Label {
 							width:50
@@ -283,7 +308,7 @@ Rectangle {
 						Rectangle {
 							width:20
 							height:10
-							color: "green"
+							color: "gray"
 						}
 						Label {
 							width:50
@@ -599,7 +624,8 @@ Rectangle {
                     y: 61
                     text: qsTr("开")
                     onClicked: {
-                        batteryStatus.readBattery("battery_status")
+                        // batteryStatus.readBattery("battery_status")
+                        systemSettings.readSystemSetting("projectId")
                     }
                 }
 			}

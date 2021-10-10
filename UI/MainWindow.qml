@@ -2,10 +2,11 @@ import QtQuick 2.2
 import QtQuick.Window 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.2
+import QtQuick.Controls 2.2 as Controls2
 import QtQuick.Controls.Styles 1.2
 import QtQuick.Particles 2.0
 
-Window {
+Controls2.ApplicationWindow {
     id: window
     minimumWidth: 1280
     minimumHeight: 800
@@ -92,6 +93,16 @@ Window {
                 }
             }
             leftCorner: Item { implicitWidth: 12 }
+        }
+    }
+
+    footer: Rectangle {
+        width: window.width
+        height: 30
+        color: "red"
+
+        Text {
+            text: "型号：" + systemSettings.projectId + "   " + "序列号：" + systemSettings.bmsSN + "   " + "软件版本号：" + systemSettings.swVersion + "   " + "硬件版本号：" + systemSettings.hwVersion + "   "
         }
     }
 }

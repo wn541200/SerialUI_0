@@ -40,7 +40,7 @@ class BatteryModel(QAbstractListModel):
         self.beginInsertRows(QModelIndex(), 0, len(data)-1)
         self.battery_data = data
         self.endInsertRows()
-        print(self.battery_data)
+        # print(self.battery_data)
 
     @pyqtSlot()
     def clear(self):

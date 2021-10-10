@@ -15,6 +15,7 @@ class Uart(QObject):
     dataReceived = pyqtSignal(str, arguments=["uartData"])  # 定义信号,qml中的处理函数的参数名为uartData，类型为string
     rawDataReceeved = pyqtSignal(bytes)
     comPortChanged = pyqtSignal(str)
+    connectedChanged = pyqtSignal(bool, arguments=["connected"])
     baudRateChanged = pyqtSignal(str)
     hexModeChanged = pyqtSignal(bool)
     uartError = pyqtSignal(str, arguments=["errorMSG"])
@@ -98,6 +99,7 @@ class Uart(QObject):
             self.transport, self.protocol = self.module_thread.connect()
             # 注册串口收到数据时的回调函数
             self.protocol.register_event_listener(self.on_uart_event)
+            self.connectedChanged.emit(True)
         except Exception as e:
             self.stop()
             self.uartError.emit('uart open fail')
@@ -113,6 +115,16 @@ class Uart(QObject):
         self.module_thread = None
         self.transport = None
         self.protocol = None
+        self.connectedChanged.emit(False)
+
+    @pyqtProperty(bool, notify=connectedChanged)
+    def connected(self):
+        if self.transport is not None:
+            uart_connect = True
+        else:
+            uart_connect = False
+
+        return uart_connect
 
     # Debug UI使用，输入框的数据要发送到串口调用这个函数
     # UI上显示的字符都是unicode的,转为byte再发送

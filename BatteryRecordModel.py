@@ -11,8 +11,16 @@ class BatteryRecordModel(QAbstractListModel):
                             self.role+1: b'voltage',
                             self.role + 2: b'current',
                             self.role + 3: b'soc',
-                            self.role + 4: b'soh'
-
+                            self.role + 4: b'soh',
+                            self.role + 5: b'maxCellVoltage',
+                            self.role + 6: b'maxCellVoltageNr',
+                            self.role + 7: b'minCellVoltage',
+                            self.role + 8: b'minCellVoltageNr',
+                            self.role + 9: b'maxCellsVoltageDiff',
+                            self.role + 10: b'maxCellTemperature',
+                            self.role + 11: b'maxCellTemperatureNr',
+                            self.role + 12: b'minCellTemperature',
+                            self.role + 13: b'minCellTemperatureNr'
                             }
         self.battery_data = []
         self.dataReceived.connect(self.update)

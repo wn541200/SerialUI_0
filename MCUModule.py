@@ -30,6 +30,7 @@ class MCUModule(QObject):
         self.systemSettings.write_system_setting_signal.connect(self.protocol.command_write_mcu)
 
         self.protocol.batteryStatusChanged.connect(self.batteryStatus.update)
+        self.protocol.batterySettingsChanged.connect(self.batterySettings.updateItem)
         self.protocol.systemStatusChanged.connect(self.systemSettings.update)
         # 4e 42 01 00 1e 02 8a 0c
 

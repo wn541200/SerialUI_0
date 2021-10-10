@@ -48,7 +48,7 @@ Rectangle {
         id: view
         flickableDirection: Flickable.VerticalFlick
         width: mainwindow.width -2
-        height: mainwindow.height - 120
+        height: mainwindow.height - 180
 
         TextArea.flickable: TextArea {
             id: txt
@@ -203,14 +203,5 @@ Rectangle {
 				}
 			}
         }
-		
-		Timer {
-        id: sendTimer
-        interval: 1000; running: false; repeat: true
-        onTriggered: {
-			uart.set_text(id_input.displayText)
-			batteryStatus.recordOneBatteryItem()
-        }
-    }
     }
 }

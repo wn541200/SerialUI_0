@@ -2,7 +2,7 @@ from PyQt5.QtCore import *
 
 
 class SystemSettings(QObject):
-    read_system_setting_signal = pyqtSignal(str, object)
+    read_system_setting_signal = pyqtSignal(str)
     write_system_setting_signal = pyqtSignal(str, object)
 
     projectIdChanged = pyqtSignal(object)
