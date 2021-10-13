@@ -1,6 +1,7 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.3
+import QtQuick.Dialogs 1.2
 // import BatteryModel 1.0
 
 Rectangle {
@@ -186,14 +187,39 @@ Rectangle {
     Button {
         id: firstPageButton
         anchors.top: gridView.bottom
-        text: qsTr("第一页")
+        text: qsTr("导入参数")
+		onClicked: {
+			fileDialog.selectExisting = true
+			fileDialog.visible = true
+		}
     }
 
     Button {
         anchors.top: gridView.bottom
         anchors.left: firstPageButton.right
-        text: qsTr("第二页")
+        text: qsTr("导出参数")
+		onClicked: {
+			fileDialog.selectExisting = false
+			fileDialog.visible = true
+		}
     }
+
+	FileDialog {
+		id: fileDialog
+		title: "参数文件"
+		folder: shortcuts.desktop
+		selectExisting: false
+		nameFilters: ["JSON files (*.json)"]
+		onAccepted: {
+			// batteryStatus.saveRecordToFile(fileDialog.fileUrl)
+			if (fileDialog.selectExisting) {
+				batterySettingsModel.readFromFile(fileDialog.fileUrl)
+			}
+			else {
+				batterySettingsModel.saveToFile(fileDialog.fileUrl)
+			}
+		}
+	}
 
 }
 

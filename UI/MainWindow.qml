@@ -99,9 +99,10 @@ Controls2.ApplicationWindow {
     footer: Rectangle {
         width: window.width
         height: 30
-        color: "red"
+        color: "lightgray"
 
         Text {
+			anchors.centerIn: parent
             text: "型号：" + systemSettings.projectId + "   " + "序列号：" + systemSettings.bmsSN + "   " + "软件版本号：" + systemSettings.swVersion + "   " + "硬件版本号：" + systemSettings.hwVersion + "   "
         }
     }

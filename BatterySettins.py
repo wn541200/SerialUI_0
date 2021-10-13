@@ -1,4 +1,7 @@
 from PyQt5.QtCore import *
+from urllib.parse import urlparse
+import json
+import copy
 
 
 class SettingItem(object):
@@ -145,7 +148,13 @@ class BatterySettings(QAbstractListModel):
     @pyqtSlot(str, bool, int, int, int, int, int, int)
     def updateItem(self, item_name, enabled, protect_threshold, protect_hysteresis, protect_threshold_delay,
                 protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay):
-        ix = self.index(0, 0)
+
+        for row, name in self.index_map.items():
+            if name == item_name:
+                ix = self.index(row, 0)
+                break
+
+        # ix = self.index(0, 0)
         item = self.settings[item_name]
         item.enabled = enabled
         item.protect_threshold = protect_threshold
@@ -160,5 +169,55 @@ class BatterySettings(QAbstractListModel):
     def readItemFromMCU(self, row):
         item_name = self.index_map[row]
         self.read_battery_signal.emit(item_name, self.settings[item_name])
+
+    @pyqtSlot(str)
+    def saveToFile(self, url: str):
+        print('saveToFile')
+        path = urlparse(url).path
+        d = {}
+        l = []
+        for k, v in self.settings.items():
+            d['name'] = v.name
+            d['enabled'] = v.enabled
+            d['protect_threshold'] = v.protect_threshold
+            d['protect_hysteresis'] = v.protect_hysteresis
+            d['protect_threshold_delay'] = v.protect_threshold_delay
+            d['protect_hysteresis_delay'] = v.protect_hysteresis_delay
+            d['alarm_threshold'] = v.alarm_threshold
+            d['alarm_threshold_delay'] = v.alarm_threshold_delay
+
+            d1 = copy.deepcopy(d)
+            l.append(d1)
+
+        try:
+            with open(path[1:], 'w', encoding='utf-8') as f:
+                json.dump(l, f, ensure_ascii=False, indent=4)
+        except Exception as e:
+            print(e)
+
+    @pyqtSlot(str)
+    def readFromFile(self, url: str):
+        print('readFromFile')
+        path = urlparse(url).path
+
+        try:
+            with open(path[1:], 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                for d in data:
+                    for k, v in self.settings.items():
+                        if d['name'] == v.name:
+                            v.enabled = d['enabled']
+                            v.protect_threshold = d['protect_threshold']
+                            v.protect_hysteresis = d['protect_hysteresis']
+                            v.protect_threshold_delay = d['protect_threshold_delay']
+                            v.protect_hysteresis_delay = d['protect_hysteresis_delay']
+                            v.alarm_threshold = d['alarm_threshold']
+                            v.alarm_threshold_delay = d['alarm_threshold_delay']
+                            self.updateItem(k, v.enabled == 1, v.protect_threshold,
+                                            v.protect_hysteresis, v.protect_threshold_delay,
+                                            v.protect_hysteresis_delay, v.alarm_threshold,
+                                            v.alarm_threshold_delay)
+        except Exception as e:
+            print(e)
 
     # def settingsToMCU(self):

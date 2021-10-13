@@ -341,7 +341,25 @@ Rectangle {
 					selectByMouse: true
 					selectByKeyboard: true
 					readOnly: true
-					
+					text: {
+						(batteryStatus.cellOverVoltageAlarm ? "单体电压过高报警\n" : "") +
+						(batteryStatus.cellUnderVoltageAlarm ? "单体电压过低报警\n" : "") +
+						(batteryStatus.batteryOverVoltageAlarm ? "总电压过高报警\n" : "") +
+						(batteryStatus.batteryUnderVoltageAlarm ? "总电压过低报警\n" : "") +
+						(batteryStatus.batteryDischargingOverCurrentAlarm ? "放电过流报警\n" : "") +
+						(batteryStatus.batteryChargingOverCurrentAlarm ? "充电过流报警\n" : "") +
+						(batteryStatus.batteryDischargingOverTemperatureAlarm ? "放电温度过高报警\n" : "") +
+						(batteryStatus.batteryChargingOverTemperatureAlarm ? "充电温度过高报警\n" : "") +
+						(batteryStatus.batteryDischargingUnderTemperatureAlarm ? "放电温度过低报警\n" : "") +
+						(batteryStatus.batteryChargingUnderTemperatureAlarm ? "充电温度过低报警\n" : "") +
+						(batteryStatus.socOverThresholdAlarm ? "soc过高报警\n" : "") +
+						(batteryStatus.socUnderThresholdAlarm ? "soc过低报警\n" : "") +
+						(batteryStatus.voltageDiffAlarm ? "压差报警\n" : "") +
+						(batteryStatus.temperatureDiffAlarm ? "温差报警\n" : "") +
+						(batteryStatus.mosTemperatureHighAlarm ? "Mos高温报警\n" : "") +
+						(batteryStatus.envTemperatureHighAlarm ? "环境高温报警\n" : "")
+					}
+
 					MouseArea {
 						anchors.fill: parent
 						propagateComposedEvents: true
@@ -481,6 +499,25 @@ Rectangle {
 					selectByKeyboard: true
 					readOnly: true
 					
+					text: {
+						(batteryStatus.cellOverVoltageProtect ? "单体电压过高保护\n" : "") +
+						(batteryStatus.cellUnderVoltageProtect ? "单体电压过低保护\n" : "") +
+						(batteryStatus.batteryOverVoltageProtect ? "总电压过高保护\n" : "") +
+						(batteryStatus.batteryUnderVoltageProtect ? "总电压过低保护\n" : "") +
+						(batteryStatus.batteryDischargingOverCurrentProtect ? "放电过流保护\n" : "") +
+						(batteryStatus.batteryChargingOverCurrentProtect ? "充电过流保护\n" : "") +
+						(batteryStatus.batteryDischargingOverTemperatureProtect ? "放电温度过高保护\n" : "") +
+						(batteryStatus.batteryChargingOverTemperatureProtect ? "充电温度过高保护\n" : "") +
+						(batteryStatus.batteryDischargingUnderTemperatureProtect ? "放电温度过低保护\n" : "") +
+						(batteryStatus.batteryChargingUnderTemperatureProtect ? "充电温度过低保护\n" : "") +
+						(batteryStatus.socOverThresholdProtect ? "soc过高保护\n" : "") +
+						(batteryStatus.socUnderThresholdProtect ? "soc过低保护\n" : "") +
+						(batteryStatus.voltageDiffProtect ? "压差保护\n" : "") +
+						(batteryStatus.temperatureDiffProtect ? "温差保护\n" : "") +
+						(batteryStatus.mosTemperatureHighProtect ? "Mos高温保护\n" : "") +
+						(batteryStatus.envTemperatureHighProtect ? "环境高温保护\n" : "")
+					}
+
 					MouseArea {
 						anchors.fill: parent
 						propagateComposedEvents: true
@@ -529,6 +566,14 @@ Rectangle {
 					selectByKeyboard: true
 					readOnly: true
 					
+					text: {
+						(batteryStatus.dischargingMosNoFunction ? "放电MOS失效\n" : "") +
+						(batteryStatus.chargingMosNoFunction ? "充电MOS失效\n" : "") +
+						(batteryStatus.eepromWriteFail ? "eeprom写失败\n" : "") +
+						(batteryStatus.notChargingUnderVoltage ? "低压禁止充电\n" : "") +
+						(batteryStatus.shortProtect ? "短路保护\n" : "")
+					}
+
 					MouseArea {
 						anchors.fill: parent
 						propagateComposedEvents: true

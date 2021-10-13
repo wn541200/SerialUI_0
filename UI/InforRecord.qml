@@ -1,5 +1,6 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.2
+import QtQuick.Dialogs 1.2
 
 
 Rectangle {
@@ -16,6 +17,24 @@ Rectangle {
         }
     }
 	
+	Connections{
+            target: batteryRecordModel
+
+            // 信号处理函数：保存文件失败时提示
+            function onErrorMessage(errorMSG) {
+                errorMessage.text = errorMSG
+                errorMessage.visible = true
+            }
+     }
+
+    // 提示用户出错的对话框，出错时再显示
+    MessageDialog {
+        id: errorMessage
+        title: qsTr("错误")
+        icon: StandardIcon.Warning
+        visible: false
+    }
+
 	Rectangle {
 		id: textArea
 		anchors.top: parent.top
@@ -26,10 +45,33 @@ Rectangle {
 		anchors.rightMargin: 20
 		height: parent.height - 120
 		width: parent.width
-		
+
 		color: "white"
-		
+
+		Connections{
+			target: batteryRecordModel
+			onRoleNamesChanged: {
+				console.log(count)
+				console.log(tabelView.columnCount)
+				var roles = batteryRecordModel.getRoleNames()
+				console.log(roles)
+				var columnCount = tabelView.columnCount
+				for (var i=0; i<(count-columnCount); i++) {
+					var column = tabelView.addColumn( Qt.createQmlObject(
+						"import QtQuick 2.2;import QtQuick.Controls 1.2;TableViewColumn {width: 100}",
+						this) )
+					column.role = roles[i+16]
+					column.title = roles[i+16]
+				}
+			}
+
+			Component.onCompleted: {
+
+			}
+		}
+
 		TableView {
+			id: tabelView
 			anchors.fill: parent
 			TableViewColumn {
 				role: "time"
@@ -101,6 +143,16 @@ Rectangle {
 				title: "最低温度序号"
 				width: 100
 			}
+			TableViewColumn {
+				role: "nrThermals"
+				title: "温度传感器数量"
+				width: 100
+			}
+			TableViewColumn {
+				role: "nrCells"
+				title: "电芯数量"
+				width: 100
+			}
 			model: batteryRecordModel
 		}
 		
@@ -113,9 +165,16 @@ Rectangle {
 		anchors.topMargin: 20
 		anchors.leftMargin: 20
 		width: root.width / 4
-		text: "显示"
+		text: "开始记录"
 		onClicked: {
-		    sendTimer.running = true
+			if (sendTimer.running) {
+				sendTimer.running = false
+				displayButton.text = "开始记录"
+			}
+			else {
+				sendTimer.running = true
+				displayButton.text = "停止记录"
+			}
 		}
 	}
 	
@@ -141,5 +200,19 @@ Rectangle {
 		anchors.leftMargin: 20
 		width: root.width / 4
 		text: "导出数据"
+		onClicked: {
+			saveFileDialog.visible = true
+		}
+	}
+
+	FileDialog {
+		id: saveFileDialog
+		title: "数据另存为"
+		folder: shortcuts.desktop
+		selectExisting: false
+		nameFilters: ["CSV files (*.csv)"]
+		onAccepted: {
+			batteryStatus.saveRecordToFile(saveFileDialog.fileUrl)
+		}
 	}
 }

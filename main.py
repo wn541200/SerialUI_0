@@ -15,6 +15,9 @@ import threading
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
+    app.setOrganizationName('xxx')
+    app.setOrganizationDomain('xxx')
+    app.setApplicationName('xxx')
     # qmlRegisterType(Uart, 'UartModule', 1, 0, 'UartModule')
 
     # qmlRegisterType(BatteryModel, 'BatteryModel', 1, 0, 'BatteryModel')

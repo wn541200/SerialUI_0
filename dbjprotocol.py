@@ -48,21 +48,21 @@ class DBJProtocol(QObject):
             'battery_thermal_sensors': [31, self.readBatterySettingItem, None, self.readBatteryStatus31Callback, None],
             'battery_cells': [32, self.readBatterySettingItem, None, self.readBatteryStatus32Callback, None],
             'cell_over_voltage': [40, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback40, self.writeCallback],
-            'cell_under_voltage': [41, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
-            'total_over_voltage': [42, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
-            'total_under_voltage': [43, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
-            'discharging_over_current': [44, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
-            'charging_over_current': [45, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
-            'soc_over_threshold': [46, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
-            'soc_under_threshold': [47, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
-            'discharging_over_temperature': [48, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
-            'charging_over_temperature': [49, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
-            'discharging_under_temperature': [50, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
-            'charging_under_temperature': [51, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
-            'voltage_diff_great': [52, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
-            'temperature_diff_great': [53, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
-            'mos_over_temperature': [54, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback],
-            'environment_over_temperature': [55, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback, self.writeCallback]
+            'cell_under_voltage': [41, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback41, self.writeCallback],
+            'total_over_voltage': [42, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback42, self.writeCallback],
+            'total_under_voltage': [43, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback43, self.writeCallback],
+            'discharging_over_current': [44, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback44, self.writeCallback],
+            'charging_over_current': [45, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback45, self.writeCallback],
+            'soc_over_threshold': [46, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback46, self.writeCallback],
+            'soc_under_threshold': [47, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback47, self.writeCallback],
+            'discharging_over_temperature': [48, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback48, self.writeCallback],
+            'charging_over_temperature': [49, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback49, self.writeCallback],
+            'discharging_under_temperature': [50, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback50, self.writeCallback],
+            'charging_under_temperature': [51, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback51, self.writeCallback],
+            'voltage_diff_great': [52, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback52, self.writeCallback],
+            'temperature_diff_great': [53, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback53, self.writeCallback],
+            'mos_over_temperature': [54, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback54, self.writeCallback],
+            'environment_over_temperature': [55, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback55, self.writeCallback]
 
         }
 
@@ -132,6 +132,9 @@ class DBJProtocol(QObject):
             crc = crc + int(c)
 
         crc = crc % 256
+
+        # print(read_crc)
+        # print(crc)
 
         return crc == read_crc
 
@@ -478,7 +481,6 @@ class DBJProtocol(QObject):
         self.command(bytes(send_buffer))
 
     def readCallback40(self, data):
-        print(data)
         protect_threshold = int(data[0] | (data[1] << 8))
         protect_hysteresis = int(data[2] | (data[3] << 8))
         alarm_threshold = int(data[4] | (data[5] << 8))
@@ -486,16 +488,173 @@ class DBJProtocol(QObject):
         protect_hysteresis_delay = int(data[8] | (data[9] << 8))
         alarm_threshold_delay = int(data[10] | (data[11] << 8))
         enabled = int(data[12] | (data[13] << 8))
-        print(protect_threshold)
-        print(protect_hysteresis)
-        print(protect_threshold_delay)
-        print(protect_hysteresis_delay)
-        print(alarm_threshold)
-        print(alarm_threshold_delay)
-        print(enabled)
         self.batterySettingsChanged.emit('cell_over_voltage', enabled==1, protect_threshold, protect_hysteresis, protect_threshold_delay,
                 protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay)
-        # self.batteryStatusChanged.emit('voltage', str(round(battery_total_voltage * 0.01, 2)))
+
+    def readCallback41(self, data):
+        protect_threshold = int(data[0] | (data[1] << 8))
+        protect_hysteresis = int(data[2] | (data[3] << 8))
+        alarm_threshold = int(data[4] | (data[5] << 8))
+        protect_threshold_delay = int(data[6] | (data[7] << 8))
+        protect_hysteresis_delay = int(data[8] | (data[9] << 8))
+        alarm_threshold_delay = int(data[10] | (data[11] << 8))
+        enabled = int(data[12] | (data[13] << 8))
+        self.batterySettingsChanged.emit('cell_under_voltage', enabled==1, protect_threshold, protect_hysteresis, protect_threshold_delay,
+                protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay)
+
+    def readCallback42(self, data):
+        protect_threshold = int(data[0] | (data[1] << 8))
+        protect_hysteresis = int(data[2] | (data[3] << 8))
+        alarm_threshold = int(data[4] | (data[5] << 8))
+        protect_threshold_delay = int(data[6] | (data[7] << 8))
+        protect_hysteresis_delay = int(data[8] | (data[9] << 8))
+        alarm_threshold_delay = int(data[10] | (data[11] << 8))
+        enabled = int(data[12] | (data[13] << 8))
+        self.batterySettingsChanged.emit('total_over_voltage', enabled==1, protect_threshold, protect_hysteresis, protect_threshold_delay,
+                protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay)
+
+    def readCallback43(self, data):
+        protect_threshold = int(data[0] | (data[1] << 8))
+        protect_hysteresis = int(data[2] | (data[3] << 8))
+        alarm_threshold = int(data[4] | (data[5] << 8))
+        protect_threshold_delay = int(data[6] | (data[7] << 8))
+        protect_hysteresis_delay = int(data[8] | (data[9] << 8))
+        alarm_threshold_delay = int(data[10] | (data[11] << 8))
+        enabled = int(data[12] | (data[13] << 8))
+        self.batterySettingsChanged.emit('total_under_voltage', enabled==1, protect_threshold, protect_hysteresis, protect_threshold_delay,
+                protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay)
+
+    def readCallback44(self, data):
+        protect_threshold = int(data[0] | (data[1] << 8))
+        protect_hysteresis = int(data[2] | (data[3] << 8))
+        alarm_threshold = int(data[4] | (data[5] << 8))
+        protect_threshold_delay = int(data[6] | (data[7] << 8))
+        protect_hysteresis_delay = int(data[8] | (data[9] << 8))
+        alarm_threshold_delay = int(data[10] | (data[11] << 8))
+        enabled = int(data[12] | (data[13] << 8))
+        self.batterySettingsChanged.emit('discharging_over_current', enabled==1, protect_threshold, protect_hysteresis, protect_threshold_delay,
+                protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay)
+
+    def readCallback45(self, data):
+        protect_threshold = int(data[0] | (data[1] << 8))
+        protect_hysteresis = int(data[2] | (data[3] << 8))
+        alarm_threshold = int(data[4] | (data[5] << 8))
+        protect_threshold_delay = int(data[6] | (data[7] << 8))
+        protect_hysteresis_delay = int(data[8] | (data[9] << 8))
+        alarm_threshold_delay = int(data[10] | (data[11] << 8))
+        enabled = int(data[12] | (data[13] << 8))
+        self.batterySettingsChanged.emit('charging_over_current', enabled==1, protect_threshold, protect_hysteresis, protect_threshold_delay,
+                protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay)
+
+    def readCallback46(self, data):
+        protect_threshold = int(data[0] | (data[1] << 8))
+        protect_hysteresis = int(data[2] | (data[3] << 8))
+        alarm_threshold = int(data[4] | (data[5] << 8))
+        protect_threshold_delay = int(data[6] | (data[7] << 8))
+        protect_hysteresis_delay = int(data[8] | (data[9] << 8))
+        alarm_threshold_delay = int(data[10] | (data[11] << 8))
+        enabled = int(data[12] | (data[13] << 8))
+        self.batterySettingsChanged.emit('soc_over_threshold', enabled==1, protect_threshold, protect_hysteresis, protect_threshold_delay,
+                protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay)
+
+    def readCallback47(self, data):
+        protect_threshold = int(data[0] | (data[1] << 8))
+        protect_hysteresis = int(data[2] | (data[3] << 8))
+        alarm_threshold = int(data[4] | (data[5] << 8))
+        protect_threshold_delay = int(data[6] | (data[7] << 8))
+        protect_hysteresis_delay = int(data[8] | (data[9] << 8))
+        alarm_threshold_delay = int(data[10] | (data[11] << 8))
+        enabled = int(data[12] | (data[13] << 8))
+        self.batterySettingsChanged.emit('soc_under_threshold', enabled==1, protect_threshold, protect_hysteresis, protect_threshold_delay,
+                protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay)
+
+    def readCallback48(self, data):
+        protect_threshold = int(data[0] | (data[1] << 8))
+        protect_hysteresis = int(data[2] | (data[3] << 8))
+        alarm_threshold = int(data[4] | (data[5] << 8))
+        protect_threshold_delay = int(data[6] | (data[7] << 8))
+        protect_hysteresis_delay = int(data[8] | (data[9] << 8))
+        alarm_threshold_delay = int(data[10] | (data[11] << 8))
+        enabled = int(data[12] | (data[13] << 8))
+        self.batterySettingsChanged.emit('discharging_over_temperature', enabled==1, protect_threshold, protect_hysteresis, protect_threshold_delay,
+                protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay)
+
+    def readCallback49(self, data):
+        protect_threshold = int(data[0] | (data[1] << 8))
+        protect_hysteresis = int(data[2] | (data[3] << 8))
+        alarm_threshold = int(data[4] | (data[5] << 8))
+        protect_threshold_delay = int(data[6] | (data[7] << 8))
+        protect_hysteresis_delay = int(data[8] | (data[9] << 8))
+        alarm_threshold_delay = int(data[10] | (data[11] << 8))
+        enabled = int(data[12] | (data[13] << 8))
+        self.batterySettingsChanged.emit('charging_over_temperature', enabled==1, protect_threshold, protect_hysteresis, protect_threshold_delay,
+                protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay)
+
+    def readCallback50(self, data):
+        protect_threshold = int(data[0] | (data[1] << 8))
+        protect_hysteresis = int(data[2] | (data[3] << 8))
+        alarm_threshold = int(data[4] | (data[5] << 8))
+        protect_threshold_delay = int(data[6] | (data[7] << 8))
+        protect_hysteresis_delay = int(data[8] | (data[9] << 8))
+        alarm_threshold_delay = int(data[10] | (data[11] << 8))
+        enabled = int(data[12] | (data[13] << 8))
+        self.batterySettingsChanged.emit('discharging_under_temperature', enabled==1, protect_threshold, protect_hysteresis, protect_threshold_delay,
+                protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay)
+
+    def readCallback51(self, data):
+        protect_threshold = int(data[0] | (data[1] << 8))
+        protect_hysteresis = int(data[2] | (data[3] << 8))
+        alarm_threshold = int(data[4] | (data[5] << 8))
+        protect_threshold_delay = int(data[6] | (data[7] << 8))
+        protect_hysteresis_delay = int(data[8] | (data[9] << 8))
+        alarm_threshold_delay = int(data[10] | (data[11] << 8))
+        enabled = int(data[12] | (data[13] << 8))
+        self.batterySettingsChanged.emit('charging_under_temperature', enabled==1, protect_threshold, protect_hysteresis, protect_threshold_delay,
+                protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay)
+
+    def readCallback52(self, data):
+        protect_threshold = int(data[0] | (data[1] << 8))
+        protect_hysteresis = int(data[2] | (data[3] << 8))
+        alarm_threshold = int(data[4] | (data[5] << 8))
+        protect_threshold_delay = int(data[6] | (data[7] << 8))
+        protect_hysteresis_delay = int(data[8] | (data[9] << 8))
+        alarm_threshold_delay = int(data[10] | (data[11] << 8))
+        enabled = int(data[12] | (data[13] << 8))
+        self.batterySettingsChanged.emit('voltage_diff_great', enabled==1, protect_threshold, protect_hysteresis, protect_threshold_delay,
+                protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay)
+
+    def readCallback53(self, data):
+        protect_threshold = int(data[0] | (data[1] << 8))
+        protect_hysteresis = int(data[2] | (data[3] << 8))
+        alarm_threshold = int(data[4] | (data[5] << 8))
+        protect_threshold_delay = int(data[6] | (data[7] << 8))
+        protect_hysteresis_delay = int(data[8] | (data[9] << 8))
+        alarm_threshold_delay = int(data[10] | (data[11] << 8))
+        enabled = int(data[12] | (data[13] << 8))
+        self.batterySettingsChanged.emit('temperature_diff_great', enabled==1, protect_threshold, protect_hysteresis, protect_threshold_delay,
+                protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay)
+
+    def readCallback54(self, data):
+        protect_threshold = int(data[0] | (data[1] << 8))
+        protect_hysteresis = int(data[2] | (data[3] << 8))
+        alarm_threshold = int(data[4] | (data[5] << 8))
+        protect_threshold_delay = int(data[6] | (data[7] << 8))
+        protect_hysteresis_delay = int(data[8] | (data[9] << 8))
+        alarm_threshold_delay = int(data[10] | (data[11] << 8))
+        enabled = int(data[12] | (data[13] << 8))
+        self.batterySettingsChanged.emit('mos_over_temperature', enabled==1, protect_threshold, protect_hysteresis, protect_threshold_delay,
+                protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay)
+
+    def readCallback55(self, data):
+        protect_threshold = int(data[0] | (data[1] << 8))
+        protect_hysteresis = int(data[2] | (data[3] << 8))
+        alarm_threshold = int(data[4] | (data[5] << 8))
+        protect_threshold_delay = int(data[6] | (data[7] << 8))
+        protect_hysteresis_delay = int(data[8] | (data[9] << 8))
+        alarm_threshold_delay = int(data[10] | (data[11] << 8))
+        enabled = int(data[12] | (data[13] << 8))
+        self.batterySettingsChanged.emit('environment_over_temperature', enabled==1, protect_threshold, protect_hysteresis, protect_threshold_delay,
+                protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay)
 
     def readCallback(self, data):
         print('readCallback')
