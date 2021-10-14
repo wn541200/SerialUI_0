@@ -62,8 +62,9 @@ class DBJProtocol(QObject):
             'voltage_diff_great': [52, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback52, self.writeCallback],
             'temperature_diff_great': [53, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback53, self.writeCallback],
             'mos_over_temperature': [54, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback54, self.writeCallback],
-            'environment_over_temperature': [55, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback55, self.writeCallback]
-
+            'environment_over_temperature': [55, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback55, self.writeCallback],
+            'system_control': [60, None, self.writeBatterySettingItem,
+                                             None, self.writeCallback]
         }
 
     def clear(self):
