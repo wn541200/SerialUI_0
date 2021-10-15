@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Controls 1.2 as C12
+import QtQuick.Controls 1.4 as C14
 
 Rectangle {
 	id: root
@@ -48,6 +49,7 @@ Rectangle {
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+						text: systemSettings.projectId
 					}
 				}
 				
@@ -57,6 +59,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("读取")
                     onClicked: {
+						systemSettings.readSystemSetting("projectId")
                     }
                 }
 				
@@ -96,6 +99,7 @@ Rectangle {
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+						text: systemSettings.bmsId
 					}
 				}
 				
@@ -107,6 +111,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("读取")
                     onClicked: {
+						systemSettings.readSystemSetting("bmsId")
                     }
                 }
 				
@@ -148,6 +153,7 @@ Rectangle {
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+						text: systemSettings.bmsSN
 					}
 				}
 				
@@ -159,6 +165,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("读取")
                     onClicked: {
+						systemSettings.readSystemSetting("bmsSN")
                     }
                 }
 				
@@ -170,6 +177,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("设置")
                     onClicked: {
+						
                     }
                 }
 			}
@@ -274,9 +282,13 @@ Rectangle {
             border.color:"black"
 
 			C12.GroupBox {
+				id: dateGroupBox
 				anchors.fill: parent
 				anchors.margins: 5
 				title: "日期设置"
+				clip: false
+				
+				property bool mpSelected: false
 				
 				Label {
                     id: productDateLabel
@@ -297,12 +309,26 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+						id: productDateTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+						readOnly: true
 					}
 				}
+				
+				C12.Button {
+					anchors.right: productDateRectangle.right
+					anchors.top: productDateRectangle.top
+					width: cellWriteButton.height
+					height: cellWriteButton.height
+					iconSource: "images/ic_calendar.png"
+                    onClicked: {
+						calendarDialog.visible = true
+						dateGroupBox.mpSelected = false
+                    }
+                }
 				
 				C12.Button {
                     id: productDateReadButton
@@ -336,13 +362,27 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+						id: mpDateTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
+						readOnly: true
 						color: "black"
 						leftPadding: 5
 					}
 				}
 				
+				C12.Button {
+					anchors.right: mpDateRectangle.right
+					anchors.top: mpDateRectangle.top
+					width: cellWriteButton.height
+					height: cellWriteButton.height
+					iconSource: "images/ic_calendar.png"
+                    onClicked: {
+						calendarDialog.visible = true
+						dateGroupBox.mpSelected = true
+                    }
+                }
+
 				C12.Button {
                     id: mpDateWriteButton
 					anchors.left: mpDateRectangle.right
@@ -351,11 +391,40 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("设置")
                     onClicked: {
+						calendarDialog.visible = true
                     }
                 }
 				
+				Dialog {
+					id: calendarDialog
+					visible: false
+					title: "选择日期"
+					standardButtons: Dialog.Ok | Dialog.Cancel
+
+					contentItem: Rectangle {
+						C14.Calendar {
+							id: calendar
+							visible: true
+							minimumDate: new Date(2020, 0, 1)
+							maximumDate: new Date(2050, 0, 1)
+							onClicked: {
+							}
+						}
+					}
+					
+					onAccepted: {
+						if (dateGroupBox.mpSelected)
+							mpDateTextInput.text = calendar.selectedDate.toLocaleDateString()
+						else
+							productDateTextInput.text = calendar.selectedDate.toLocaleDateString()
+					}
+				}
+				
+				
 			}
 		}
+		
+		
 		
 		Rectangle{
             width: root.width / 3
@@ -893,6 +962,7 @@ Rectangle {
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+						text: systemSettings.soc
 					}
 				}
 				
@@ -902,6 +972,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("读取")
                     onClicked: {
+						systemSettings.readSystemSetting("socSohSetting")
                     }
                 }
 				
