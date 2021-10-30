@@ -1,4 +1,5 @@
 import queue
+import struct
 import threading
 import time
 from math import ceil
@@ -12,6 +13,7 @@ class DBJProtocol(QObject):
     batteryStatusChanged = pyqtSignal(str, object)
     batterySettingsChanged = pyqtSignal(str, bool, int, int, int, int, int, int)
     systemStatusChanged = pyqtSignal(str, object)
+    historyRecordCountChanged = pyqtSignal(int)
     port_send_request_signal = pyqtSignal(bytes)
 
     def __init__(self, parent=None):
@@ -64,7 +66,11 @@ class DBJProtocol(QObject):
             'mos_over_temperature': [54, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback54, self.writeCallback],
             'environment_over_temperature': [55, self.readBatterySettingItem, self.writeBatterySettingItem, self.readCallback55, self.writeCallback],
             'system_control': [60, None, self.writeBatterySettingItem,
-                                             None, self.writeCallback]
+                                             None, self.writeCallback],
+            'history_record': [70, self.readCode70, None,
+                              self.readCallback70, None],
+            'history_count': [71, self.readBatterySettingItem, None,
+                               self.readCallback71, None]
         }
 
     def clear(self):
@@ -447,7 +453,7 @@ class DBJProtocol(QObject):
         crc = 0
         for c in data:
             crc = crc + int(c)
-        crc = crc % 0xff
+        crc = crc % 256
         return crc.to_bytes(length=1, byteorder='little')
 
     def readBatterySettingItem(self, code, data):
@@ -468,7 +474,7 @@ class DBJProtocol(QObject):
         send_buffer.extend(b'\x01')
         send_buffer.extend(b'\x00')
         send_buffer.extend(code)
-        send_buffer.extend(b'\x0d')
+        send_buffer.extend(b'\x0e')
         send_buffer.extend(int(data.protect_threshold).to_bytes(length=2, byteorder='little'))
         send_buffer.extend(int(data.protect_hysteresis).to_bytes(length=2, byteorder='little'))
         send_buffer.extend(int(data.alarm_threshold).to_bytes(length=2, byteorder='little'))
@@ -656,6 +662,32 @@ class DBJProtocol(QObject):
         enabled = int(data[12] | (data[13] << 8))
         self.batterySettingsChanged.emit('environment_over_temperature', enabled==1, protect_threshold, protect_hysteresis, protect_threshold_delay,
                 protect_hysteresis_delay, alarm_threshold, alarm_threshold_delay)
+
+    def readCode70(self, code, data=None):
+        count_from = 1
+        count_to = 1
+        send_buffer = bytearray()
+        send_buffer.extend(self.START)
+        send_buffer.extend(b'\x01')
+        send_buffer.extend(b'\x01')
+        send_buffer.extend(code) # code 70
+        send_buffer.extend(b'\x08') # len
+        send_buffer.extend(struct.pack('i', count_from))
+        send_buffer.extend(struct.pack('i', count_to))
+        crc = self.getCrc(send_buffer)
+        send_buffer.extend(crc)
+        self.command(bytes(send_buffer))
+
+        print(send_buffer)
+
+
+    def readCallback70(self, data):
+        history_count = struct.unpack('i', data);
+        self.historyRecordCountChanged.emit(history_count[0])
+
+    def readCallback71(self, data):
+        history_count = struct.unpack('i', data);
+        self.historyRecordCountChanged.emit(history_count[0])
 
     def readCallback(self, data):
         print('readCallback')

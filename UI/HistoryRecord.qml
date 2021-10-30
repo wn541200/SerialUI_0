@@ -28,6 +28,9 @@ Rectangle {
 		anchors.topMargin: 20
 		anchors.leftMargin: 20
 		text: "获取事件总数"
+		onClicked: {
+		    historyRecord.readHistoryRecord("history_count")
+		}
 	}
 	
 	Rectangle {
@@ -50,7 +53,7 @@ Rectangle {
 		id: countLabel
 		anchors.left: seperateItem.right
 		anchors.verticalCenter: seperateItem.verticalCenter
-		text: "事件总数:"
+		text: "事件总数:" + historyRecord.historyRecordCount
 	}
 	
 	Button {
@@ -123,6 +126,9 @@ Rectangle {
 		Button {
 			anchors.verticalCenter: parent.verticalCenter
 			text: "读取全部"
+			onClicked: {
+			    historyRecord.readHistoryRecord("history_record")
+			}
 		}
 	}
 }
