@@ -24,28 +24,35 @@ class DBJProtocol(QObject):
         self.buffer = bytearray()
 
         self.function_map = {
-            'projectId': [1, self.readBatterySettingItem, self.writeProductID, self.readProductIDCallback,
+            'projectId': [1, self.readBatterySettingItem, self.writeStringID, self.readProductIDCallback,
                           self.writeCallback],
-            'bmsId': [2, self.readBatterySettingItem, self.writeProductID, self.readBmsIdCallback,
+            'bmsId': [2, self.readBatterySettingItem, self.writeStringID, self.readBmsIdCallback,
                       self.writeCallback],
-            'version': [3, self.readBatterySettingItem, self.writeProductID, self.readVersionCallback,
+            'version': [3, self.readBatterySettingItem, self.writeVersion, self.readVersionCallback,
                         self.writeCallback],
-            'protocolVersion': [4, self.readBatterySettingItem, self.writeProductID, self.readProtocolVersionCallback,
+            'protocolVersion': [4, self.readBatterySettingItem, self.writeProtocolVersion, self.readProtocolVersionCallback,
                                 self.writeCallback],
-            'bmsSN': [5, self.readBatterySettingItem, self.writeProductID, self.readBmsSNCallback,
+            'bmsSN': [5, self.readBatterySettingItem, self.writeStringID, self.readBmsSNCallback,
                                 self.writeCallback],
-            'balanceInfo': [8, self.readBatterySettingItem, self.writeProductID, self.readBalanceInfoCallback,
+            'bmsMPDate': [6, self.readBatterySettingItem, self.writeBmsMPDate, self.readBmsMPDateCallback,
                       self.writeCallback],
-            'circleSetting': [9, self.readBatterySettingItem, self.writeProductID, self.readCircleSettingCallback,
+            'countInfo': [7, self.readBatterySettingItem, self.writeCountInfo, self.readCountInfoCallback,
+                          self.writeCallback],
+            'balanceInfo': [8, self.readBatterySettingItem, self.writeBalanceInfo, self.readBalanceInfoCallback,
+                      self.writeCallback],
+            'circleSetting': [9, self.readBatterySettingItem, self.writeCircleSetting, self.readCircleSettingCallback,
                             self.writeCallback],
-            'socSohSetting': [10, self.readBatterySettingItem, self.writeProductID, self.readSocSohSettingCallback,
+            'socSohSetting': [10, self.readBatterySettingItem, self.writesocSohSetting, self.readSocSohSettingCallback,
                               self.writeCallback],
-            'resistance': [11, self.readBatterySettingItem, self.writeProductID, self.readResistanceCallback,
+            'resistance': [11, self.readBatterySettingItem, self.writeResistance, self.readResistanceCallback,
                               self.writeCallback],
-            'dischargingCurrentRatio': [12, self.readBatterySettingItem, self.writeProductID, self.readDischargingCurrentRatioCallback,
+            'dischargingCurrentRatio': [12, self.readBatterySettingItem, self.writeDischargingCurrentRatio, self.readDischargingCurrentRatioCallback,
                            self.writeCallback],
-            'chargingCurrentRatio': [13, self.readBatterySettingItem, self.writeProductID, self.readChargingCurrentRatioCallback,
+            'chargingCurrentRatio': [13, self.readBatterySettingItem, self.writeChargingCurrentRatio, self.readChargingCurrentRatioCallback,
                                         self.writeCallback],
+            'bmsRTCDate': [14, self.readBatterySettingItem, self.writeBmsRTCDate,
+                                     self.readBmsRTCDateCallback,
+                                     self.writeCallback],
             'battery_status': [30, self.readBatterySettingItem, None, self.readBatteryStatus30Callback, None],
             'battery_thermal_sensors': [31, self.readBatterySettingItem, None, self.readBatteryStatus31Callback, None],
             'battery_cells': [32, self.readBatterySettingItem, None, self.readBatteryStatus32Callback, None],
@@ -185,8 +192,265 @@ class DBJProtocol(QObject):
         print(product_id)
         self.systemStatusChanged.emit('projectId', product_id)
 
-    def writeProductID(self, data):
-        pass
+    def writeStringID(self, code, data):
+        send_buffer = bytearray()
+        send_buffer.extend(self.START)
+        send_buffer.extend(b'\x01')
+        send_buffer.extend(b'\x00')
+        send_buffer.extend(code)
+        send_buffer.extend(int(len(data)).to_bytes(length=1, byteorder='little'))
+        send_buffer.extend(data.encode('utf-8'))
+
+        crc = self.getCrc(send_buffer)
+        send_buffer.extend(crc)
+        self.command(bytes(send_buffer))
+
+    def writeVersion(self, code, data):
+        send_buffer = bytearray()
+        send_buffer.extend(self.START)
+        send_buffer.extend(b'\x01')
+        send_buffer.extend(b'\x00')
+        send_buffer.extend(code)
+        send_buffer.extend(b'\x04')
+        send_buffer.extend(int(data.split(' ')[0]).to_bytes(length=2, byteorder='little'))
+        send_buffer.extend(int(data.split(' ')[1]).to_bytes(length=2, byteorder='little'))
+
+        crc = self.getCrc(send_buffer)
+        send_buffer.extend(crc)
+        self.command(bytes(send_buffer))
+
+    def writeProtocolVersion(self, code, data):
+        send_buffer = bytearray()
+        send_buffer.extend(self.START)
+        send_buffer.extend(b'\x01')
+        send_buffer.extend(b'\x00')
+        send_buffer.extend(code)
+        send_buffer.extend(b'\x02')
+        send_buffer.extend(int(data).to_bytes(length=2, byteorder='little'))
+
+        crc = self.getCrc(send_buffer)
+        send_buffer.extend(crc)
+        self.command(bytes(send_buffer))
+
+    def writeBmsMPDate(self, code, data):
+        print(data)
+        send_buffer = bytearray()
+        send_buffer.extend(self.START)
+        send_buffer.extend(b'\x01')
+        send_buffer.extend(b'\x00')
+        send_buffer.extend(code)
+        send_buffer.extend(b'\x0c')
+        bcd_year = int(data[2:4])//10*16+int(data[2:4])%10
+        send_buffer.extend(int(bcd_year).to_bytes(length=1, byteorder='little'))
+
+        bcd_month = int(data[5:7]) // 10 * 16 + int(data[5:7]) % 10
+        send_buffer.extend(int(bcd_month).to_bytes(length=1, byteorder='little'))
+
+        bcd_day = int(data[8:10]) // 10 * 16 + int(data[8:10]) % 10
+        send_buffer.extend(int(bcd_day).to_bytes(length=1, byteorder='little'))
+
+        send_buffer.extend(b'\x00')
+        send_buffer.extend(b'\x00')
+        send_buffer.extend(b'\x00')
+
+        bcd_year = int(data[14:16]) // 10 * 16 + int(data[14:16]) % 10
+        send_buffer.extend(int(bcd_year).to_bytes(length=1, byteorder='little'))
+
+        bcd_month = int(data[17:19]) // 10 * 16 + int(data[17:19]) % 10
+        send_buffer.extend(int(bcd_month).to_bytes(length=1, byteorder='little'))
+
+        bcd_day = int(data[20:22]) // 10 * 16 + int(data[20:22]) % 10
+        send_buffer.extend(int(bcd_day).to_bytes(length=1, byteorder='little'))
+
+        send_buffer.extend(b'\x00')
+        send_buffer.extend(b'\x00')
+        send_buffer.extend(b'\x00')
+
+        crc = self.getCrc(send_buffer)
+        send_buffer.extend(crc)
+        self.command(bytes(send_buffer))
+
+
+    def writeCountInfo(self, code, data):
+        send_buffer = bytearray()
+        send_buffer.extend(self.START)
+        send_buffer.extend(b'\x01')
+        send_buffer.extend(b'\x00')
+        send_buffer.extend(code)
+        send_buffer.extend(b'\x04')
+        send_buffer.extend(int(data.split(' ')[0]).to_bytes(length=2, byteorder='little'))
+        send_buffer.extend(int(data.split(' ')[1]).to_bytes(length=2, byteorder='little'))
+
+        crc = self.getCrc(send_buffer)
+        send_buffer.extend(crc)
+        self.command(bytes(send_buffer))
+
+    def readCountInfoCallback(self, data):
+        cellCount = int(data[0] | (data[1] << 8))
+        self.systemStatusChanged.emit('cellCount', cellCount)
+        thermalCount = int(data[2] | (data[3] << 8))
+        self.systemStatusChanged.emit('thermalCount', thermalCount)
+
+    def writeBalanceInfo(self, code, data):
+        send_buffer = bytearray()
+        send_buffer.extend(self.START)
+        send_buffer.extend(b'\x01')
+        send_buffer.extend(b'\x00')
+        send_buffer.extend(code)
+        send_buffer.extend(b'\x08')
+        send_buffer.extend(int(data.split(' ')[0]).to_bytes(length=2, byteorder='little'))
+        send_buffer.extend(int(data.split(' ')[1]).to_bytes(length=2, byteorder='little'))
+        send_buffer.extend(int(data.split(' ')[2]).to_bytes(length=2, byteorder='little'))
+        send_buffer.extend(int(data.split(' ')[3]).to_bytes(length=2, byteorder='little'))
+
+        crc = self.getCrc(send_buffer)
+        send_buffer.extend(crc)
+        self.command(bytes(send_buffer))
+
+    def writeCircleSetting(self, code, data):
+        send_buffer = bytearray()
+        send_buffer.extend(self.START)
+        send_buffer.extend(b'\x01')
+        send_buffer.extend(b'\x00')
+        send_buffer.extend(code)
+        send_buffer.extend(b'\x08')
+        send_buffer.extend(int(data.split(' ')[0]).to_bytes(length=2, byteorder='little'))
+        send_buffer.extend(int(data.split(' ')[1]).to_bytes(length=2, byteorder='little'))
+        send_buffer.extend(int(data.split(' ')[2]).to_bytes(length=2, byteorder='little'))
+        send_buffer.extend(int(data.split(' ')[3]).to_bytes(length=2, byteorder='little'))
+
+        crc = self.getCrc(send_buffer)
+        send_buffer.extend(crc)
+        self.command(bytes(send_buffer))
+
+    def writesocSohSetting(self, code, data):
+        send_buffer = bytearray()
+        send_buffer.extend(self.START)
+        send_buffer.extend(b'\x01')
+        send_buffer.extend(b'\x00')
+        send_buffer.extend(code)
+        send_buffer.extend(b'\x04')
+        send_buffer.extend(int(data.split(' ')[0]).to_bytes(length=2, byteorder='little'))
+        send_buffer.extend(int(data.split(' ')[1]).to_bytes(length=2, byteorder='little'))
+
+        crc = self.getCrc(send_buffer)
+        send_buffer.extend(crc)
+        self.command(bytes(send_buffer))
+
+    def writeResistance(self, code, data):
+        send_buffer = bytearray()
+        send_buffer.extend(self.START)
+        send_buffer.extend(b'\x01')
+        send_buffer.extend(b'\x00')
+        send_buffer.extend(code)
+        send_buffer.extend(b'\x04')
+        send_buffer.extend(int(data.split(' ')[0]).to_bytes(length=2, byteorder='little'))
+        send_buffer.extend(int(data.split(' ')[1]).to_bytes(length=2, byteorder='little'))
+
+        crc = self.getCrc(send_buffer)
+        send_buffer.extend(crc)
+        self.command(bytes(send_buffer))
+
+    def writeDischargingCurrentRatio(self, code, data):
+        send_buffer = bytearray()
+        send_buffer.extend(self.START)
+        send_buffer.extend(b'\x01')
+        send_buffer.extend(b'\x00')
+        send_buffer.extend(code)
+        send_buffer.extend(b'\x02')
+        send_buffer.extend(int(data).to_bytes(length=2, byteorder='little'))
+
+        crc = self.getCrc(send_buffer)
+        send_buffer.extend(crc)
+        self.command(bytes(send_buffer))
+
+    def writeChargingCurrentRatio(self, code, data):
+        send_buffer = bytearray()
+        send_buffer.extend(self.START)
+        send_buffer.extend(b'\x01')
+        send_buffer.extend(b'\x00')
+        send_buffer.extend(code)
+        send_buffer.extend(b'\x02')
+        send_buffer.extend(int(data).to_bytes(length=2, byteorder='little'))
+
+        crc = self.getCrc(send_buffer)
+        send_buffer.extend(crc)
+        self.command(bytes(send_buffer))
+
+    def writeBmsRTCDate(self, code, data):
+        print(data)
+        send_buffer = bytearray()
+        send_buffer.extend(self.START)
+        send_buffer.extend(b'\x01')
+        send_buffer.extend(b'\x00')
+        send_buffer.extend(code)
+        send_buffer.extend(b'\x06')
+        bcd_year = int(data[2:4]) // 10 * 16 + int(data[2:4]) % 10
+        send_buffer.extend(int(bcd_year).to_bytes(length=1, byteorder='little'))
+
+        bcd_month = int(data[5:7]) // 10 * 16 + int(data[5:7]) % 10
+        send_buffer.extend(int(bcd_month).to_bytes(length=1, byteorder='little'))
+
+        bcd_day = int(data[8:10]) // 10 * 16 + int(data[8:10]) % 10
+        send_buffer.extend(int(bcd_day).to_bytes(length=1, byteorder='little'))
+
+        bcd_hour = int(data[11:13]) // 10 * 16 + int(data[11:13]) % 10
+        send_buffer.extend(int(bcd_hour).to_bytes(length=1, byteorder='little'))
+
+        bcd_minute = int(data[14:16]) // 10 * 16 + int(data[14:16]) % 10
+        send_buffer.extend(int(bcd_minute).to_bytes(length=1, byteorder='little'))
+
+        bcd_second = int(data[17:19]) // 10 * 16 + int(data[17:19]) % 10
+        send_buffer.extend(int(bcd_second).to_bytes(length=1, byteorder='little'))
+
+        crc = self.getCrc(send_buffer)
+        send_buffer.extend(crc)
+        self.command(bytes(send_buffer))
+        print(send_buffer)
+
+    def readBmsRTCDateCallback(self, data):
+        bmsRTCDate = "20"
+        bmsRTCDate += str(int(data[0])//16*10)
+        bmsRTCDate += "年"
+        bmsRTCDate += str(int(data[1]) // 16 * 10)
+        bmsRTCDate += "月"
+        bmsRTCDate += str(int(data[2]) // 16 * 10)
+        bmsRTCDate += "日 "
+        bmsRTCDate += str(int(data[3]) // 16 * 10)
+        bmsRTCDate += "："
+        bmsRTCDate += str(int(data[4]) // 16 * 10)
+        bmsRTCDate += "："
+        bmsRTCDate += str(int(data[5]) // 16 * 10)
+        self.systemStatusChanged.emit('bmsRTCDate', bmsRTCDate)
+
+    def readBmsMPDateCallback(self, data):
+        bmsProductDate = "20"
+        bmsProductDate += str(int(data[0]) // 16 * 10)
+        bmsProductDate += "年"
+        bmsProductDate += str(int(data[1]) // 16 * 10)
+        bmsProductDate += "月"
+        bmsProductDate += str(int(data[2]) // 16 * 10)
+        bmsProductDate += "日 "
+        bmsProductDate += str(int(data[3]) // 16 * 10)
+        bmsProductDate += "："
+        bmsProductDate += str(int(data[4]) // 16 * 10)
+        bmsProductDate += "："
+        bmsProductDate += str(int(data[5]) // 16 * 10)
+        self.systemStatusChanged.emit('bmsProductDate', bmsProductDate)
+
+        bmsMPDate = "20"
+        bmsMPDate += str(int(data[0]) // 16 * 10)
+        bmsMPDate += "年"
+        bmsMPDate += str(int(data[1]) // 16 * 10)
+        bmsMPDate += "月"
+        bmsMPDate += str(int(data[2]) // 16 * 10)
+        bmsMPDate += "日 "
+        bmsMPDate += str(int(data[3]) // 16 * 10)
+        bmsMPDate += "："
+        bmsMPDate += str(int(data[4]) // 16 * 10)
+        bmsMPDate += "："
+        bmsMPDate += str(int(data[5]) // 16 * 10)
+        self.systemStatusChanged.emit('bmsMPDate', bmsMPDate)
 
     def readBmsIdCallback(self, data):
         bms_id = data.decode('utf-8')

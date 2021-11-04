@@ -12,6 +12,9 @@ class SystemSettings(QObject):
     protocolVersionChanged = pyqtSignal(object)
     bmsSNChanged = pyqtSignal(object)
     bmsMPDateChanged = pyqtSignal(object)
+    bmsProductDateChanged = pyqtSignal(object)
+    cellCountChanged = pyqtSignal(object)
+    thermalCountChanged = pyqtSignal(object)
     balanceEnableFlagChanged = pyqtSignal(object)
     balanceEnableVoltageDiffChanged = pyqtSignal(object)
     balanceEnableVoltageChanged = pyqtSignal(object)
@@ -26,7 +29,7 @@ class SystemSettings(QObject):
     zeroCurrentADCValueChanged = pyqtSignal(object)
     dischargingCurrentRatioChanged = pyqtSignal(object)
     chargingCurrentRatioChanged = pyqtSignal(object)
-    bmsDateChanged = pyqtSignal(object)
+    bmsRTCDateChanged = pyqtSignal(object)
 
     def __init__(self, parent=None):
         super(QObject, self).__init__(parent)
@@ -40,7 +43,10 @@ class SystemSettings(QObject):
             'hwVersion': ['', self.hwVersionChanged],
             'protocolVersion': ['', self.protocolVersionChanged],
             'bmsSN': ['', self.bmsSNChanged],
+            'bmsProductDate': ['', self.bmsProductDateChanged],
             'bmsMPDate': ['', self.bmsMPDateChanged],
+            'cellCount': [0, self.cellCountChanged],
+            'thermalCount': [0, self.thermalCountChanged],
             'balanceEnableFlag': ['', self.balanceEnableFlagChanged],
             'balanceEnableVoltageDiff': [0, self.balanceEnableVoltageDiffChanged],
             'balanceEnableVoltage': [0, self.balanceEnableVoltageChanged],
@@ -48,14 +54,14 @@ class SystemSettings(QObject):
             'chargingCircleSetting': [0, self.chargingCircleSettingChanged],
             'totalChargingCirCle': [0, self.totalChargingCirCleChanged],
             'realCapacity': [0, self.realCapacityChanged],
-            'settingCapacity': ['', self.settingCapacityChanged],
+            'settingCapacity': [0, self.settingCapacityChanged],
             'soh': [0, self.sohChanged],
             'soc': [0, self.socChanged],
             'sampleResistanceValue': [0, self.sampleResistanceValueChanged],
             'zeroCurrentADCValue': [0, self.zeroCurrentADCValueChanged],
             'dischargingCurrentRatio': [0, self.dischargingCurrentRatioChanged],
             'chargingCurrentRatio': [0, self.chargingCurrentRatioChanged],
-            'bmsDate': ['', self.bmsDateChanged]
+            'bmsRTCDate': ['', self.bmsRTCDateChanged]
         }
 
     @pyqtProperty(str, notify=projectIdChanged)
@@ -82,9 +88,21 @@ class SystemSettings(QObject):
     def bmsSN(self):
         return str(self.update_needed['bmsSN'][0])
 
+    @pyqtProperty(str, notify=bmsProductDateChanged)
+    def bmsProductDate(self):
+        return str(self.update_needed['bmsProductDate'][0])
+
     @pyqtProperty(str, notify=bmsMPDateChanged)
     def bmsMPDate(self):
         return str(self.update_needed['bmsMPDate'][0])
+
+    @pyqtProperty(str, notify=cellCountChanged)
+    def cellCount(self):
+        return str(self.update_needed['cellCount'][0])
+
+    @pyqtProperty(str, notify=thermalCountChanged)
+    def thermalCount(self):
+        return str(self.update_needed['thermalCount'][0])
 
     @pyqtProperty(str, notify=balanceEnableFlagChanged)
     def balanceEnableFlag(self):
@@ -114,6 +132,10 @@ class SystemSettings(QObject):
     def realCapacity(self):
         return str(self.update_needed['realCapacity'][0])
 
+    @pyqtProperty(str, notify=settingCapacityChanged)
+    def settingCapacity(self):
+        return str(self.update_needed['settingCapacity'][0])
+
     @pyqtProperty(str, notify=sohChanged)
     def soh(self):
         return str(self.update_needed['soh'][0])
@@ -138,9 +160,9 @@ class SystemSettings(QObject):
     def chargingCurrentRatio(self):
         return str(self.update_needed['chargingCurrentRatio'][0])
 
-    @pyqtProperty(str, notify=bmsDateChanged)
-    def bmsDate(self):
-        return str(self.update_needed['bmsDate'][0])
+    @pyqtProperty(str, notify=bmsRTCDateChanged)
+    def bmsRTCDate(self):
+        return str(self.update_needed['bmsRTCDate'][0])
 
     def update(self, *args, **kwargs):
         # print(args)
@@ -161,6 +183,6 @@ class SystemSettings(QObject):
     def readSystemSetting(self, func_name:str):
         self.read_system_setting_signal.emit(func_name)
 
-    @pyqtSlot(str, object)
+    @pyqtSlot(str, QVariant)
     def writeSystemSetting(self, func_name:str, data):
         self.write_system_setting_signal.emit(func_name, data)

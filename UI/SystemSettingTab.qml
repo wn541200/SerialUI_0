@@ -45,6 +45,7 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: productIDTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
@@ -69,6 +70,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("设置")
                     onClicked: {
+                        systemSettings.writeSystemSetting("projectId", productIDTextInput.text)
                     }
                 }
 				
@@ -95,6 +97,7 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: bmsIDTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
@@ -123,6 +126,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("设置")
                     onClicked: {
+                        systemSettings.writeSystemSetting("bmsId", bmsIDTextInput.text)
                     }
                 }
 				
@@ -149,6 +153,7 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: snTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
@@ -172,12 +177,12 @@ Rectangle {
 				C12.Button {
                     id: snWriteButton
 					anchors.left: snReadButton.right
-					anchors.top: bmsLabel.bottom
+                    anchors.top: bmsLabel.bottom
 					anchors.topMargin: 5
 					anchors.leftMargin: 10
                     text: qsTr("设置")
                     onClicked: {
-						
+                        systemSettings.writeSystemSetting("bmsSN", snTextInput.text)
                     }
                 }
 			}
@@ -214,10 +219,12 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: batteryTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+                        text:  systemSettings.cellCount
 					}
 				}
 				
@@ -227,6 +234,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("读取")
                     onClicked: {
+                        systemSettings.readSystemSetting("countInfo")
                     }
                 }
 				
@@ -253,10 +261,12 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: cellTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+                        text:  systemSettings.thermalCount
 					}
 				}
 				
@@ -268,6 +278,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("设置")
                     onClicked: {
+                        systemSettings.writeSystemSetting("countInfo", batteryTextInput.text + " " + cellTextInput.text)
                     }
                 }
 				
@@ -391,7 +402,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("设置")
                     onClicked: {
-						calendarDialog.visible = true
+                        systemSettings.writeSystemSetting("bmsMPDate", productDateTextInput.text + " " +mpDateTextInput.text)
                     }
                 }
 				
@@ -414,9 +425,9 @@ Rectangle {
 					
 					onAccepted: {
 						if (dateGroupBox.mpSelected)
-							mpDateTextInput.text = calendar.selectedDate.toLocaleDateString()
+                            mpDateTextInput.text = calendar.selectedDate.toLocaleDateString(Qt.locale("zh_CN"), "yyyy年MM月dd日")
 						else
-							productDateTextInput.text = calendar.selectedDate.toLocaleDateString()
+                            productDateTextInput.text = calendar.selectedDate.toLocaleDateString(Qt.locale("zh_CN"), "yyyy年MM月dd日")
 					}
 				}
 				
@@ -461,10 +472,12 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: balanceEnableDiffTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+                        text: systemSettings.balanceEnableVoltageDiff
 					}
 				}
 				
@@ -481,7 +494,7 @@ Rectangle {
                 }
 				
 				Rectangle {
-					id: enableVoltageRectangle
+                    id: enableVoltageRectangle
 					anchors.left: enableVoltageLabel.right
 					// anchors.top: socLabel.bottom
 					anchors.topMargin: 5
@@ -492,10 +505,12 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: balanceEnableVoltageTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+                        text: systemSettings.balanceEnableVoltage
 					}
 				}
 				
@@ -522,10 +537,12 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: balanceDisableVoltageTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+                        text: systemSettings.balanceDisableVoltage
 					}
 				}
 				
@@ -536,7 +553,7 @@ Rectangle {
 					// anchors.top: enableVoltageRectangle.bottom
 					anchors.verticalCenter: disableVoltageRectangle.verticalCenter
                     text: qsTr("使能")
-
+                    checked: systemSettings.balanceEnableFlag==1 ? true : false
                 }
 				
 				C12.Button {
@@ -547,6 +564,7 @@ Rectangle {
 					anchors.rightMargin: 10
                     text: qsTr("读取")
                     onClicked: {
+                        systemSettings.readSystemSetting("balanceInfo")
                     }
                 }
 				
@@ -558,6 +576,10 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("设置")
                     onClicked: {
+                        systemSettings.writeSystemSetting("balanceInfo", Number(checkBox.checked) + " "
+                                                          + balanceEnableDiffTextInput.text + " "
+                                                          + balanceEnableVoltageTextInput.text + " "
+                                                          + balanceDisableVoltageTextInput.text)
                     }
                 }
 				
@@ -595,10 +617,12 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: resistanceTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+                        text: systemSettings.sampleResistanceValue
 					}
 				}
 				
@@ -608,6 +632,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("读取")
                     onClicked: {
+                        systemSettings.readSystemSetting("resistance")
                     }
                 }
 				
@@ -634,10 +659,12 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: zeroCurrentTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+                        text: systemSettings.zeroCurrentADCValue
 					}
 				}
 				
@@ -649,6 +676,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("设置")
                     onClicked: {
+                        systemSettings.writeSystemSetting("resistance", resistanceTextInput.text + " " + zeroCurrentTextInput.text)
                     }
                 }
 				
@@ -690,10 +718,12 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: setCircleTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+                        text: systemSettings.chargingCircleSetting
 					}
 				}
 				
@@ -721,10 +751,12 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: totalCircleTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+                        text: systemSettings.totalChargingCirCle
 					}
 				}
 				
@@ -751,10 +783,12 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: realCapacityTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+                        text: systemSettings.realCapacity
 					}
 				}
 				
@@ -784,10 +818,12 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: setCapacityTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+                        text: systemSettings.settingCapacity
 					}
 				}
 				
@@ -799,6 +835,7 @@ Rectangle {
 					anchors.rightMargin: 10
                     text: qsTr("读取")
                     onClicked: {
+                        systemSettings.readSystemSetting("circleSetting")
                     }
                 }
 				
@@ -810,6 +847,10 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("设置")
                     onClicked: {
+                        systemSettings.writeSystemSetting("circleSetting", setCircleTextInput.text + " "
+                                                          + totalCircleTextInput.text + " "
+                                                          + realCapacityTextInput.text + " "
+                                                          + setCapacityTextInput.text)
                     }
                 }
 				
@@ -847,10 +888,12 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: dischargingRatioTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+                        text:  systemSettings.dischargingCurrentRatio
 					}
 				}
 				
@@ -860,6 +903,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("读取")
                     onClicked: {
+                        systemSettings.readSystemSetting("dischargingCurrentRatio")
                     }
                 }
 				
@@ -869,6 +913,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("设置")
                     onClicked: {
+                        systemSettings.writeSystemSetting("dischargingCurrentRatio", dischargingRatioTextInput.text)
                     }
                 }
 				
@@ -895,10 +940,12 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: chargingRatioTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+                        text:  systemSettings.chargingCurrentRatio
 					}
 				}
 				
@@ -910,6 +957,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("读取")
                     onClicked: {
+                        systemSettings.readSystemSetting("chargingCurrentRatio")
                     }
                 }
 				
@@ -921,6 +969,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("设置")
                     onClicked: {
+                        systemSettings.writeSystemSetting("chargingCurrentRatio", chargingRatioTextInput.text)
                     }
                 }
 				
@@ -958,6 +1007,7 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: socTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
@@ -999,10 +1049,12 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: sohTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+                        text: systemSettings.soh
 					}
 				}
 				
@@ -1014,6 +1066,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("设置")
                     onClicked: {
+                        systemSettings.writeSystemSetting("socSohSetting", socTextInput.text + " " + sohTextInput.text)
                     }
                 }
 				
@@ -1038,6 +1091,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("读取模组时间")
                     onClicked: {
+                        systemSettings.readSystemSetting("bmsRTCDate")
                     }
                 }
 				
@@ -1048,6 +1102,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("写入系统时间")
                     onClicked: {
+                         systemSettings.writeSystemSetting("bmsRTCDate" ,Qt.formatDateTime(new Date(), "yyyy-MM-dd hh:mm:ss"))
                     }
                 }
 				
@@ -1095,10 +1150,12 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: swVersionTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+                        text: systemSettings.swVersion
 					}
 				}
 				
@@ -1108,6 +1165,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("读取")
                     onClicked: {
+                        systemSettings.readSystemSetting("version")
                     }
                 }
 				
@@ -1134,10 +1192,12 @@ Rectangle {
 					border.width: 1
 					border.color: "#353535"
 					TextInput {
+                        id: hwVersionTextInput
 						anchors.fill: parent
 						verticalAlignment: TextInput.AlignVCenter
 						color: "black"
 						leftPadding: 5
+                        text: systemSettings.hwVersion
 					}
 				}
 				
@@ -1149,6 +1209,7 @@ Rectangle {
 					anchors.leftMargin: 10
                     text: qsTr("设置")
                     onClicked: {
+                        systemSettings.writeSystemSetting("version", swVersionTextInput.text + " " + hwVersionTextInput.text)
                     }
                 }
 				
